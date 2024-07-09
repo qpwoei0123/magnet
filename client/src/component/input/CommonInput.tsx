@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, memo, useCallback} from 'react';
 
 type CommonInputProps = {
 	placeholder: string;
@@ -10,12 +10,15 @@ type CommonInputProps = {
 // inputType은 number와 password, month 세 가지 중 하나만 가능합니다.
 type inputType = 'number' | 'password' | 'month';
 
-export const CommonInput = ({placeholder, icon, value, onChange, type}: CommonInputProps) => {
+export const CommonInput = memo(({placeholder, icon, value, onChange, type}: CommonInputProps) => {
 	const [isVisible, setIsVisible] = useState(false);
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		onChange(e.target.value);
-	};
+	const handleInputChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			onChange(e.target.value);
+		},
+		[onChange],
+	);
 
 	// inputType이 password일 경우, visiblePassword 상태에 따라 type을 변경합니다.
 	const typeLogic = type === 'password' ? (isVisible ? 'text' : 'password') : type;
@@ -37,7 +40,7 @@ export const CommonInput = ({placeholder, icon, value, onChange, type}: CommonIn
 			)}
 		</div>
 	);
-};
+});
 
 // 클릭 시 비밀번호 보이기/숨기기 기능버튼
 const VisibleToggleButton = ({
