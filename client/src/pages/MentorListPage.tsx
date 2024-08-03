@@ -59,15 +59,10 @@ const MentoringListPage = () => {
 			{loading ? (
 				<LodingContainer />
 			) : filteredMentoringList.length === 0 ? (
-				<div className="flexCol mt-20 items-center gap-2">
-					<img
-						src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Face%20with%20Monocle.png"
-						alt="Crying Face"
-						width="100"
-						className="animate-downALittle"
-					/>
-					<p className="animate-fadeIn font-bold transition-opacity delay-300">
-						아무리 찾아봐도 없네요...
+				<div className="flexCol mt-20  items-center gap-2 text-secondary">
+					<i className="ri-ghost-line ri-2x animate-pulse "></i>
+					<p className="textBase animate-fadeIn transition-opacity delay-300">
+						앗! 여기는 빈 공간이에요...
 					</p>
 				</div>
 			) : (
