@@ -1,22 +1,7 @@
 import {AppliedMentoringBox} from './AppliedMentoringBox';
+import {Mentee} from '../../types';
 
-type ScheduleboxProps = {
-	mentorName: string;
-	menteeId: number;
-	memberId: number;
-	message: string;
-	schedule: string;
-	paymentKey: string;
-	email: string;
-	mentoringId: number;
-	title: string;
-	content: string;
-	pay: string;
-	participants: number;
-	category: string;
-};
-
-export const MenteeScheduleSection = ({MenteeList}: {MenteeList: ScheduleboxProps[]}) => {
+export const MenteeScheduleSection = ({MenteeList}: {MenteeList: Mentee[]}) => {
 	return (
 		<section className="userPageSection flexCol gap-10">
 			<div className="flexCol items-start gap-1">
@@ -32,7 +17,7 @@ export const MenteeScheduleSection = ({MenteeList}: {MenteeList: ScheduleboxProp
 			) : (
 				<div className="flexCol w-full gap-2 rounded-xl bg-white">
 					{MenteeList.map((el, index) => (
-						<AppliedMentoringBox mentoringDto={el} key={index} />
+						<AppliedMentoringBox Mentee={el} key={index} />
 					))}
 				</div>
 			)}

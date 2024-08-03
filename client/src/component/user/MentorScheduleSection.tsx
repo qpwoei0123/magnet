@@ -1,27 +1,7 @@
 import {CreatedMentoringBox} from './CreatedMentoringBox';
-type ScheduleboxProps = {
-	mentorId: number;
-	mentorName: string;
-	career: string;
-	field: string;
-	task: string;
-	email: string;
-	phone: string;
-	aboutMe: string;
-	github: string;
-	mentoringDtoList: mentoringDto[];
-};
-type mentoringDto = {
-	id: number;
-	title: string;
-	content: string;
-	pay: string;
-	period: string;
-	participants: number;
-	category: string;
-};
+import {Mentor} from '../../types';
 
-export const MentorScheduleSection = ({mentorList}: {mentorList: ScheduleboxProps[]}) => {
+export const MentorScheduleSection = ({mentorList}: {mentorList: Mentor[]}) => {
 	const mentoringList = mentorList[0].mentoringDtoList;
 	return (
 		<section className="userPageSection flexCol gap-10">

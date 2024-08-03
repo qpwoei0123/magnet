@@ -1,22 +1,9 @@
 import {useState} from 'react';
+import {Mentee} from '../../types';
 
-type appliedMentoringProps = {
-	mentorName: string;
-	menteeId: number;
-	memberId: number;
-	message: string;
-	schedule: string;
-	paymentKey: string;
-	email: string;
-	mentoringId: number;
-	title: string;
-	content: string;
-	pay: string;
-	participants: number;
-	category: string;
-};
-export const AppliedMentoringBox = ({mentoringDto}: {mentoringDto: appliedMentoringProps}) => {
+export const AppliedMentoringBox = ({Mentee}: {Mentee: Mentee}) => {
 	const [isClicked, setIsClicked] = useState(false);
+	const {category, title, mentorName, schedule, pay, email, message} = Mentee;
 	// 버튼 클릭 시 mentoring 데이터 가져오기
 	const handleClick = async () => {
 		setIsClicked(!isClicked); // isClicked 상태 토글
@@ -26,30 +13,30 @@ export const AppliedMentoringBox = ({mentoringDto}: {mentoringDto: appliedMentor
 		<div className="interactionPushDown flexCol w-full rounded-lg border">
 			<button className={` textSmall flexCenter w-full justify-between p-5`} onClick={handleClick}>
 				<div className="flexCol items-start gap-3">
-					<span className="font-PartialSansKR_Regular">{mentoringDto.category}</span>
-					<span>{mentoringDto.title}</span>
+					<span className="font-PartialSansKR_Regular">{category}</span>
+					<span>{title}</span>
 				</div>
 				<i className={`ri-arrow-drop-${isClicked ? 'down' : 'right'}-line ri-3x`} />
 				{/* 버튼 아이콘 변경 */}
 			</button>
 
-			{isClicked && mentoringDto && (
+			{isClicked && schedule && (
 				<div className={`textSmall flexCol animate-fadeIn gap-3 p-5 pt-0 `}>
 					<div>
 						<p className="textBase font-black">멘토</p>
-						<span className="text-secondary">{mentoringDto.mentorName}</span>
+						<span className="text-secondary">{mentorName}</span>
 					</div>
 					<div>
 						<p className="textBase font-black">멘토링 일정</p>
-						<span className="text-secondary">{mentoringDto.schedule}</span>
+						<span className="text-secondary">{schedule}</span>
 					</div>
 					<div>
 						<p className="textBase font-black">결제 금액</p>
-						<span className="text-secondary">{mentoringDto.pay}원</span>
+						<span className="text-secondary">{pay}원</span>
 					</div>
 					<div>
 						<p className="textBase font-black">연락가능한 이메일</p>
-						<span className="text-secondary">{mentoringDto.email}</span>
+						<span className="text-secondary">{email}</span>
 					</div>
 					<div>
 						<p className="textBase font-black">연락가능한 전화번호</p>
@@ -57,7 +44,7 @@ export const AppliedMentoringBox = ({mentoringDto}: {mentoringDto: appliedMentor
 					</div>
 					<div>
 						<p className="textBase font-black">멘토에게 전달사항</p>
-						<span className="text-secondary">{mentoringDto.message}</span>
+						<span className="text-secondary">{message}</span>
 					</div>
 				</div>
 			)}

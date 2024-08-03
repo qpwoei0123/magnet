@@ -1,24 +1,7 @@
 import {getMenteeList} from '../../api/mentee';
 import {useOpenMenteeListModal} from '../../hooks/useOpenModals';
 import {useState} from 'react';
-
-type MentoringDto = {
-	id: number;
-	title: string;
-	content: string;
-	pay: string;
-	period: string;
-	participants: number;
-	category: string;
-};
-
-type MenteeData = {
-	menteeId: number;
-	menteeNickName: string;
-	schedule: string;
-	phone: any;
-	email: string;
-};
+import {MentoringDto, MenteeData} from '../../types/index';
 
 export const CreatedMentoringBox = ({mentoringDto}: {mentoringDto: MentoringDto}) => {
 	const openMenteeListModal = useOpenMenteeListModal(); // 멘티 리스트 모달 열기
@@ -51,13 +34,13 @@ export const MenteeListModal = ({menteeList}: {menteeList: MenteeData[]}) => {
 		<div className="flexCol h-96 w-full gap-3 overflow-scroll">
 			<span className="font-PartialSansKR_Regular"> 멘티 리스트 </span>
 			{menteeList.map((mentee, index) => (
-				<MennteeBox mentee={mentee} key={index} />
+				<MenteeBox mentee={mentee} key={index} />
 			))}
 		</div>
 	);
 };
 
-const MennteeBox = ({mentee, key}: {mentee: MenteeData; key: number}) => {
+const MenteeBox = ({mentee, key}: {mentee: MenteeData; key: number}) => {
 	const [isShow, setIsShow] = useState(false);
 
 	return (
