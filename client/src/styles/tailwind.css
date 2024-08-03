@@ -23,7 +23,7 @@
     }
     /* 페이지 관련 */
     .rootPageSection {
-      @apply w-full bg-white min-h-pageRoot 
+      @apply w-full bg-slate-50 min-h-pageRoot 
     }
     .userPageSection {
       @apply w-11/12 lg:w-3/4 rounded-xl p-5 sm:p-10 bg-white shadow-md
