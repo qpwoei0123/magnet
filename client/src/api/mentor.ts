@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {Mentor} from '../types';
 
 const baseUrl = process.env.REACT_APP_BASE_URL || 'NO_BASE_URL';
 
@@ -45,33 +46,11 @@ export const createMentor = async (data: createMentorData) => {
 	}
 };
 
-export type getMentorData = {
-	mentorId: number;
-	mentorName: string;
-	career: string;
-	field: string;
-	task: string;
-	email: string;
-	phone: string;
-	aboutMe: string;
-	github: string;
-	mentoringDtoList: MentoringDtoList[];
-};
-type MentoringDtoList = {
-	id: number;
-	title: string;
-	content: string;
-	pay: string;
-	period: string;
-	participants: number;
-	category: string;
-};
-
-export const getMentor = async (): Promise<getMentorData> => {
+export const getMentor = async (): Promise<Mentor> => {
 	try {
 		const authorToken = sessionStorage.getItem('Authorization');
 		const refreshToken = sessionStorage.getItem('RefreshToken');
-		const response = await axios.get<getMentorData>(`${baseUrl}/mentor/get`, {
+		const response = await axios.get<Mentor>(`${baseUrl}/mentor/get`, {
 			headers: {
 				'Content-Type': 'application/json',
 				'ngrok-skip-browser-warning': 'true',
