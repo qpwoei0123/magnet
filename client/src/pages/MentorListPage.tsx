@@ -89,7 +89,7 @@ const MentoringListPage = () => {
 						<button
 							onClick={handlePreviousPage}
 							disabled={currentPage === 1}
-							className="buttonStyleTertiary font-semibold"
+							className="activeStyle border font-semibold disabled:hover:text-slate-400"
 						>
 							이전
 						</button>
@@ -99,7 +99,7 @@ const MentoringListPage = () => {
 						<button
 							onClick={handleNextPage}
 							disabled={currentPage === totalPages}
-							className={`buttonStyleTertiary font-semibold`}
+							className={`activeStyle border font-semibold disabled:hover:text-slate-400`}
 						>
 							다음
 						</button>
