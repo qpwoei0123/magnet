@@ -38,7 +38,7 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-const SignupForm = () => {
+const useSignForm = () => {
 	const navigate = useNavigate();
 	const openToast = useOpenToastPopup();
 
@@ -74,19 +74,24 @@ const SignupForm = () => {
 			console.error('회원가입에 실패했어요.', e);
 		}
 	};
+	return {handleSubmit, onSubmit, formState, control};
+};
+
+const SignupForm = () => {
+	const {control, formState, onSubmit, handleSubmit} = useSignForm();
 
 	return (
 		<section className="flexCol w-full items-center gap-10 *:w-10/12 *:md:w-96">
 			<form onSubmit={handleSubmit(onSubmit)} className="flexCol gap-5">
-				<HookFormInput<FormValues> name="email" icon="mail-line" control={control} />
+				<HookFormInput name="email" icon="mail-line" control={control} />
 
-				<HookFormInput<FormValues> name="password" icon="key-2-line" control={control} />
+				<HookFormInput name="password" icon="key-2-line" control={control} type="password" />
 
-				<HookFormInput<FormValues> name="username" icon="user-line" control={control} />
+				<HookFormInput name="username" icon="user-line" control={control} />
 
-				<HookFormInput<FormValues> name="nickName" icon="aliens-line" control={control} />
+				<HookFormInput name="nickName" icon="aliens-line" control={control} />
 
-				<HookFormInput<FormValues> name="phone" icon="phone-line" control={control} />
+				<HookFormInput name="phone" icon="phone-line" control={control} />
 
 				<button type="submit" className="buttonStylePrimary" disabled={!formState.isValid}>
 					회원가입
