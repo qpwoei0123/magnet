@@ -1,154 +1,102 @@
-import {useState, useCallback, useMemo} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {signup, login} from '../../api/auth';
-import {WarningMessage} from '../common/WarningMessage';
-import {CommonInput} from '../input/CommonInput';
 import {useOpenToastPopup} from '../../hooks/useOpenToastPopup';
 import {getMember} from '../../api/member';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {HookFormInput} from '../input/HookFormInput';
 
-const SignupForm = () => {
+const schema = z.object({
+	email: z
+		.string()
+		.max(40, '이메일의 길이가 비정상적 입니다.')
+		.email('유효한 이메일 형식이어야 합니다.'),
+	username: z
+		.string()
+		.min(2, '한글 2자리 이상이어야 합니다.')
+		.max(10, '이름은 최대 10자리 입니다.')
+		.regex(/^[가-힣]+$/, '한글만 입력 가능합니다.'),
+	password: z
+		.string()
+		.min(8, '최소 8자 이상이어야 합니다.')
+		.max(20, '비밀번호는 최대 20자리 입니다.')
+		.regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, '영문과 숫자를 모두 포함해야 합니다.'),
+	nickName: z
+		.string()
+		.min(3, '특수문자 제외 3자리 이상이어야 합니다.')
+		.max(20, '닉네임은 최대 10자리 입니다.')
+		.regex(/^[A-Za-z0-9가-힣]+$/, '특수문자는 포함될 수 없습니다.'),
+	phone: z
+		.string()
+		.max(20, '번호의 길이가 비정상적 입니다.')
+		.regex(
+			/^([0-9]{2}|[0-9]{3})-([0-9]{3,4})-([0-9]{4})$/,
+			'하이픈(-)을 포함한 9자리 이상 정수여야 합니다.',
+		),
+});
+
+type FormValues = z.infer<typeof schema>;
+
+const useSignForm = () => {
 	const navigate = useNavigate();
 	const openToast = useOpenToastPopup();
 
-	const [email, setEmail] = useState('');
-	const [username, setUsername] = useState('');
-	const [password, setPassword] = useState('');
-	const [nickName, setNickName] = useState('');
-	const [phone, setPhone] = useState('');
-	const [address] = useState({city: 'city', street: 'street'});
-
-	const [validatedForm, setValidatedForm] = useState({
-		email: false,
-		username: false,
-		password: false,
-		nickName: false,
-		phone: false,
+	const {handleSubmit, formState, control} = useForm<FormValues>({
+		resolver: zodResolver(schema),
+		mode: 'onChange',
+		defaultValues: {
+			email: '',
+			username: '',
+			password: '',
+			nickName: '',
+			phone: '',
+		},
 	});
 
-	const validators: {[key: string]: RegExp} = useMemo(
-		() => ({
-			email: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/,
-			username: /^[가-힣]{2,}$/,
-			nickName: /^[A-Za-z0-9-가-힣]{3,}$/,
-			phone: /^([0-9]{2}|[0-9]{3})-([0-9]{3,4})-([0-9]{4})$/,
-			password: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
-		}),
-		[],
-	);
-
-	const handleSignup = async () => {
+	const onSubmit = async (data: FormValues) => {
 		try {
-			await signup({email, username, password, nickName, phone, addressDto: address});
+			const {email, username, password, nickName, phone} = data;
+			await signup({
+				email,
+				username,
+				password,
+				nickName,
+				phone,
+				addressDto: {city: 'city', street: 'street'},
+			});
 			await login({email, password});
 			await getMember();
 			navigate('/');
-			openToast({message: `${nickName}님 가입을 축하드려요!`, type: 'success'});
+			openToast({message: `${data.nickName}님 가입을 축하드려요!`, type: 'success'});
 		} catch (e) {
 			openToast({message: '회원가입에 실패했어요.', type: 'error'});
 			console.error('회원가입에 실패했어요.', e);
 		}
 	};
+	return {handleSubmit, onSubmit, formState, control};
+};
 
-	const validateField = useCallback(
-		(field: string | number, value: string) => {
-			const isValid = validators[field].test(value);
-			setValidatedForm(prev => ({...prev, [field]: isValid}));
-
-			switch (field) {
-				case 'email':
-					setEmail(value);
-					break;
-				case 'username':
-					setUsername(value);
-					break;
-				case 'nickName':
-					setNickName(value);
-					break;
-				case 'phone':
-					setPhone(value);
-					break;
-				case 'password':
-					setPassword(value);
-					break;
-				default:
-					break;
-			}
-		},
-		[validators],
-	);
-
-	const isFormValid = useMemo(
-		() => Object.values(validatedForm).every(validated => validated),
-		[validatedForm],
-	);
+const SignupForm = () => {
+	const {control, formState, onSubmit, handleSubmit} = useSignForm();
 
 	return (
 		<section className="flexCol w-full items-center gap-10 *:w-10/12 *:md:w-96">
-			<div className="flexCol gap-2">
-				<CommonInput
-					placeholder="이메일"
-					icon="mail-line"
-					value={email}
-					onChange={useCallback(val => validateField('email', val), [validateField])}
-				/>
-				<WarningMessage
-					message="이메일 형식이어야 합니다."
-					isSuccess={validatedForm.email || email.length === 0}
-				/>
+			<form onSubmit={handleSubmit(onSubmit)} className="flexCol gap-5">
+				<HookFormInput name="email" icon="mail-line" control={control} />
 
-				<CommonInput
-					type="password"
-					placeholder="비밀번호"
-					icon="key-2-line"
-					value={password}
-					onChange={useCallback(val => validateField('password', val), [validateField])}
-				/>
-				<WarningMessage
-					message="최소 8자 이상, 영문과 숫자를 모두 포함해야 합니다."
-					isSuccess={validatedForm.password || password.length === 0}
-				/>
-			</div>
+				<HookFormInput name="password" icon="key-2-line" control={control} type="password" />
 
-			<div className="flexCol gap-2">
-				<CommonInput
-					placeholder="실명"
-					icon="user-line"
-					value={username}
-					onChange={useCallback(val => validateField('username', val), [validateField])}
-				/>
-				<WarningMessage
-					message="한글 2자리 이상이여야 합니다."
-					isSuccess={validatedForm.username || username.length === 0}
-				/>
+				<HookFormInput name="username" icon="user-line" control={control} />
 
-				<CommonInput
-					placeholder="전화번호"
-					icon="phone-line"
-					value={phone}
-					onChange={useCallback(val => validateField('phone', val), [validateField])}
-				/>
-				<WarningMessage
-					message="하이픈(-)을 포함한 9자리 이상 정수여야 합니다."
-					isSuccess={validatedForm.phone || phone.length === 0}
-				/>
-			</div>
+				<HookFormInput name="nickName" icon="aliens-line" control={control} />
 
-			<div className="flexCol">
-				<CommonInput
-					placeholder="닉네임"
-					icon="aliens-line"
-					value={nickName}
-					onChange={useCallback(val => validateField('nickName', val), [validateField])}
-				/>
-				<WarningMessage
-					message="특수문자 제외 3자리 이상이여야 합니다."
-					isSuccess={validatedForm.nickName || nickName.length === 0}
-				/>
-			</div>
+				<HookFormInput name="phone" icon="phone-line" control={control} />
 
-			<button onClick={handleSignup} className="buttonStylePrimary" disabled={!isFormValid}>
-				회원가입
-			</button>
+				<button type="submit" className="buttonStylePrimary" disabled={!formState.isValid}>
+					회원가입
+				</button>
+			</form>
 		</section>
 	);
 };
