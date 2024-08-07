@@ -1,4 +1,4 @@
-import {useState, FC} from 'react';
+import {useState} from 'react';
 import {FieldValues, Path, useWatch, Control, useFormState, Controller} from 'react-hook-form';
 
 type UseHookFormInputProps<T extends FieldValues> = {

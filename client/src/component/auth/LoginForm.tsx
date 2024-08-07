@@ -1,20 +1,27 @@
-import {useState} from 'react';
 import {login} from '../../api/auth';
-import {CommonInput} from '../input/CommonInput';
-import {useOpenToastPopup} from '../../hooks/useOpenToastPopup';
 import {getMember} from '../../api/member';
+import {useOpenToastPopup} from '../../hooks/useOpenToastPopup';
 import ModalStore from '../../store/ModalStore';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {loginSchema, LoginFormValues} from '../../schema/login';
+import {HookFormInput} from '../input/HookFormInput';
 
-const LoginForm = () => {
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
+const useLoginForm = () => {
 	const openToast = useOpenToastPopup();
 	const {closeModal} = ModalStore();
 
-	const handleLogin = async () => {
+	const {control, formState, handleSubmit} = useForm({
+		mode: 'onChange',
+		resolver: zodResolver(loginSchema),
+		defaultValues: {email: '', password: ''},
+	});
+
+	const handleLogin = async (formData: LoginFormValues) => {
 		const fetchLogin = async () => {
 			try {
-				await login({email, password});
+				console.log(formData);
+				await login(formData);
 				await getMember();
 				closeModal();
 				openToast({message: '로그인 성공!', type: 'success'});
@@ -23,35 +30,27 @@ const LoginForm = () => {
 					message: '이메일 또는 비밀번호를 확인하세요.',
 					type: 'error',
 				});
-				resetState();
 			}
 		};
-		const resetState = () => {
-			setEmail('');
-			setPassword('');
-		};
+
 		fetchLogin();
 	};
 
+	return {control, formState, handleSubmit, handleLogin};
+};
+
+const LoginForm = () => {
+	const {control, formState, handleSubmit, handleLogin} = useLoginForm();
+
 	return (
 		<section className="flexCol w-full gap-10 py-10 md:w-96">
-			<div className="flexCol w-full gap-5">
-				<CommonInput placeholder="이메일" icon="mail-line" value={email} onChange={setEmail} />
-				<CommonInput
-					placeholder="비밀번호"
-					icon="key-2-line"
-					value={password}
-					onChange={setPassword}
-					type="password"
-				/>
-			</div>
-			<button
-				onClick={handleLogin}
-				className={`buttonStylePrimary w-full`}
-				disabled={password && email ? false : true}
-			>
-				로그인
-			</button>
+			<form onSubmit={handleSubmit(handleLogin)} className="flexCol w-full gap-5">
+				<HookFormInput control={control} name="email" icon="mail-line" />
+				<HookFormInput control={control} name="password" icon="key-2-line" type="password" />
+				<button className={`buttonStylePrimary w-full`} disabled={!formState.isValid}>
+					로그인
+				</button>
+			</form>
 		</section>
 	);
 };
