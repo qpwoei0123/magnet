@@ -1,10 +1,11 @@
 import {useEffect, useState} from 'react';
-import {getMentoring, getMentoringData} from '../../api/mentoring';
+import {getMentoring} from '../../api/mentoring';
 import {useLocation} from 'react-router-dom';
 import {LodingContainer} from '../common/LoadingContainer';
+import {GetMentoringResponse} from '../../types/api';
 
 export const PageOne = () => {
-	const [mentoringData, setMentoringData] = useState<getMentoringData | null>(null);
+	const [mentoringData, setMentoringData] = useState<GetMentoringResponse | null>(null);
 	const location = useLocation();
 
 	// 멘토링 정보를 불러온다.
@@ -13,7 +14,7 @@ export const PageOne = () => {
 			try {
 				const searchParams = new URLSearchParams(location.search);
 				const mentoringid = searchParams.get('mentoringid');
-				const data: getMentoringData = await getMentoring(mentoringid ? Number(mentoringid) : 0);
+				const data = await getMentoring(mentoringid ? Number(mentoringid) : 0);
 				setMentoringData(data);
 			} catch (error) {
 				console.error('멘토링 정보를 불러오는 동안 오류가 발생했습니다:', error);

@@ -1,5 +1,5 @@
 import {useNavigate} from 'react-router-dom';
-import {Content} from '../api/mentoring';
+import {Content} from '../types/api';
 import {useOpenPaymentModal} from '../hooks/useOpenModals';
 
 const MentorCard = ({mentoring}: {mentoring: Content}) => {

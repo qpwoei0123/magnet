@@ -3,7 +3,7 @@ import {useEffect, useState} from 'react';
 import {PageOne} from './PageOne';
 import {PageTwo} from './PageTwo';
 import {PageThree} from './PageThree';
-import {getMentoring, getMentoringData} from '../../api/mentoring';
+import {getMentoring} from '../../api/mentoring';
 import {useLocation} from 'react-router-dom';
 import {MentoringStore} from '../../store/MentoringStore';
 
@@ -18,8 +18,8 @@ const PaymentModal = () => {
 		const fetchMentoringData = async () => {
 			try {
 				const searchParams = new URLSearchParams(location.search);
-				const mentoringid = searchParams.get('mentoringid');
-				const data: getMentoringData = await getMentoring(mentoringid ? Number(mentoringid) : 0);
+				const mentoringId = searchParams.get('mentoringid');
+				const data = await getMentoring(mentoringId ? Number(mentoringId) : 0);
 				setMentoringData(data);
 			} catch (error) {
 				console.error('멘토링 정보를 불러오는 동안 오류가 발생했습니다:', error);
