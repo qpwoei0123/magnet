@@ -2,17 +2,12 @@ import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import UserInfoBox from './UserInfoBox';
 import {removeAuthTokens} from '../../utils/auth/removeAuthTokens';
-import {
-	updateMember,
-	updateMemberData,
-	getMemberResponse,
-	getMember,
-	deleteMember,
-} from '../../api/member';
+import {updateMember, getMember, deleteMember} from '../../api/member';
+import {UpdateMemberParams, GetMemberResponse} from '../../types/api';
 import {MemberStore} from '../../store/MemberStore';
 import {useOpenToastPopup} from '../../hooks/useOpenToastPopup';
 
-export const UserInfoSection = ({member}: {member: getMemberResponse}) => {
+export const UserInfoSection = ({member}: {member: GetMemberResponse}) => {
 	const [changeNickName, setChangeNickName] = useState<string>('');
 	const {resetGlobalMember} = MemberStore();
 	const {nickName, phone, email} = member;
@@ -24,7 +19,7 @@ export const UserInfoSection = ({member}: {member: getMemberResponse}) => {
 		if (confirmed) {
 			try {
 				// 회원 정보 업데이트 요청 보내기
-				const updatedData: updateMemberData = {
+				const updatedData: UpdateMemberParams = {
 					addressDto: {city: 'city', street: 'street'},
 					nickName: changeNickName,
 				};

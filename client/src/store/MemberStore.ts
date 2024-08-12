@@ -1,9 +1,9 @@
-import {getMemberResponse} from '../api/member';
+import {GetMemberResponse} from '../types/api';
 import {create} from 'zustand';
 
 type useStoreProps = {
-	globalMember: getMemberResponse | null;
-	setGlobalMember: (member: getMemberResponse) => void;
+	globalMember: GetMemberResponse | null;
+	setGlobalMember: (member: GetMemberResponse) => void;
 	resetGlobalMember: () => void;
 };
 

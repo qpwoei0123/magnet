@@ -1,7 +1,8 @@
 import {useEffect, useState} from 'react';
 import MentorCard from '../component/MentorCard';
 import {LodingContainer} from '../component/common/LoadingContainer';
-import {getMentoringList, Content} from '../api/mentoring';
+import {getMentoringList} from '../api/mentoring';
+import {Content} from '../types/api/mentoring';
 import {categories} from '../asset/categories';
 
 const MentoringListPage = () => {
@@ -19,7 +20,7 @@ const MentoringListPage = () => {
 	useEffect(() => {
 		const fetchMentoringList = async () => {
 			try {
-				const data = await getMentoringList(currentPage, size);
+				const data = await getMentoringList({offset: currentPage, size});
 				setMentoringList(data.content);
 				setTotalPages(data.totalPages);
 				console.log(data);
