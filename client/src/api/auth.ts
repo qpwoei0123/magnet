@@ -1,61 +1,42 @@
-import axios from 'axios';
+import {AxiosResponse} from 'axios';
 import {saveAuthTokens} from '../utils/auth/saveAuthTokens';
-import {removeAuthTokens} from '../utils/auth/removeAuthTokens';
+import {axiosInstance} from './axiosInstance';
+import {SignupParams, LoginParams} from '../types/api';
 
-const baseUrl = process.env.REACT_APP_BASE_URL || 'NO_BASE_URL';
-type signupBody = {
-	email: string;
-	password: string;
-	username: string;
-	nickName: string;
-	phone: string;
-	addressDto: {
-		city: string | null;
-		street: string | null;
-	};
+export const signup = async (data: SignupParams) => {
+	await axiosInstance.post('/member/signup', data);
 };
-export const signup = async (data: signupBody) => {
+
+export const login = async (body: LoginParams) => {
 	try {
-		console.log(baseUrl);
-		const respone = await axios.post(`${baseUrl}/member/signup`, {
-			email: data.email,
-			password: data.password,
-			username: data.username,
-			nickName: data.nickName,
-			phone: data.phone,
-			addressDto: {
-				city: data.addressDto.city,
-				street: data.addressDto.street,
-			},
-		});
-		return respone.data;
+		const res = await axiosInstance.post('/auth/login', createLoginPayload(body));
+		handleLoginResponseToken(res);
 	} catch (error) {
-		console.error('회원가입 실패', error);
+		console.error(`login 함수에서 문제 발생`);
 		throw error;
 	}
 };
+// 백엔드에서 수정할 떄 까지 임시로.
+const createLoginPayload = (body: LoginParams) => ({
+	username: body.email,
+	password: body.password,
+});
+// 응답에 대한 토큰 조작
+const handleLoginResponseToken = (response: AxiosResponse) => {
+	const authHeader = response.headers.authorization;
+	const refreshTokenHeader = response.headers.refreshtoken;
 
-type loginBody = {
-	email: string;
-	password: string;
-};
-export const login = async (body: loginBody) => {
-	try {
-		const response = await axios.post(`${baseUrl}/auth/login`, {
-			username: body.email,
-			password: body.password,
-		});
-		console.log('로그인 성공', response.data);
-		saveAuthTokens({
-			Authorization: response.headers.authorization,
-			RefreshToken: response.headers.refreshtoken,
-		});
-		return response.data;
-	} catch (error) {
-		removeAuthTokens();
-		console.error('로그인 실패', error);
-		throw error;
+	if (!authHeader) {
+		throw new Error('Authorization 헤더가 누락되었습니다.');
 	}
+	if (!refreshTokenHeader) {
+		throw new Error('RefreshToken 헤더가 누락되었습니다.');
+	}
+
+	saveAuthTokens({
+		Authorization: authHeader,
+		RefreshToken: refreshTokenHeader,
+	});
 };
 
-export const logout = async () => {};
+// export const logout = async () => {};
