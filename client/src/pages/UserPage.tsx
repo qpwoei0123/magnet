@@ -1,4 +1,4 @@
-import {LodingContainer} from '../component/common/LoadingContainer';
+import {LoadingContainer} from '../component/common/LoadingContainer';
 import {UserInfoSection} from '../component/user/UserInfoSection';
 import {MentorRegistSection} from '../component/user/MentorRegistSection';
 import {MentorScheduleSection} from '../component/user/MentorScheduleSection';
@@ -28,7 +28,7 @@ const UserPage = () => {
 					)}
 				</>
 			) : (
-				<LodingContainer />
+				<LoadingContainer />
 			)}
 		</div>
 	);

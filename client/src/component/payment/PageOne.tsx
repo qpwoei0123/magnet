@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {getMentoring} from '../../api/mentoring';
 import {useLocation} from 'react-router-dom';
-import {LodingContainer} from '../common/LoadingContainer';
+import {LoadingContainer} from '../common/LoadingContainer';
 import {GetMentoringResponse} from '../../types/api';
 
 export const PageOne = () => {
@@ -47,6 +47,6 @@ export const PageOne = () => {
 			/>
 		</>
 	) : (
-		<LodingContainer />
+		<LoadingContainer />
 	);
 };

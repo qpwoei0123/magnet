@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import MentorCard from '../component/MentorCard';
-import {LodingContainer} from '../component/common/LoadingContainer';
+import {LoadingContainer} from '../component/common/LoadingContainer';
 import {getMentoringList} from '../api/mentoring';
 import {Content} from '../types/api/mentoring';
 import {categories} from '../asset/categories';
@@ -70,7 +70,7 @@ const MentoringListPage = () => {
 				개 씩 보기
 			</div> */}
 			{loading ? (
-				<LodingContainer />
+				<LoadingContainer />
 			) : filteredMentoringList.length === 0 ? (
 				// 비어있을 경우
 				<div className="flexCol mt-20  items-center gap-2 text-secondary">

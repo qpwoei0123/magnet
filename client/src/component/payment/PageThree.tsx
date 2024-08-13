@@ -1,5 +1,5 @@
 import {MentoringStore} from '../../store/MentoringStore';
-import {LodingContainer} from '../common/LoadingContainer';
+import {LoadingContainer} from '../common/LoadingContainer';
 
 export const PageThree = () => {
 	const {mentoringData} = MentoringStore();
@@ -36,6 +36,6 @@ export const PageThree = () => {
 			</div>
 		</>
 	) : (
-		<LodingContainer />
+		<LoadingContainer />
 	);
 };
