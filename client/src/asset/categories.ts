@@ -5,6 +5,7 @@ export type Category = {
 };
 
 export const categories: Category[] = [
+	{title: '전체', id: 'ALL', icon: 'menu-line'},
 	{title: '웹 디자인', id: 'WEB_DESIGN', icon: 'brush-2-line'},
 	{title: 'UI/UX', id: 'UI_UX', icon: 'layout-2-line'},
 	{title: '프로덕트 매니저', id: 'PRODUCT_MANAGER', icon: 'file-list-2-line'},
