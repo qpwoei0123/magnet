@@ -1,10 +1,9 @@
-import {useState, useEffect, useCallback} from 'react';
+import {useState, useEffect, useCallback, useMemo} from 'react';
 import {getMentoringList} from '../../api/mentoring';
-import {categories} from '../../asset/categories';
 import {Content} from '../../types/api/mentoring';
 
 export const useMentoringList = () => {
-	const [category, setCategory] = useState('ALL');
+	const [selectedCategory, setSelectedCategory] = useState('ALL');
 	const [mentoringList, setMentoringList] = useState<Content[]>([]);
 	const [currentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(0);
@@ -12,9 +11,12 @@ export const useMentoringList = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isError, setIsError] = useState(false);
 
-	const newCategories = [{id: 'ALL', title: '전체', icon: 'menu-line'}].concat(categories);
-	const filteredMentoringList = mentoringList.filter(
-		el => el.category === category || category === 'ALL',
+	const filteredMentoringList = useMemo(
+		() =>
+			selectedCategory === 'ALL'
+				? mentoringList
+				: mentoringList.filter(el => el.category === selectedCategory),
+		[mentoringList, selectedCategory],
 	);
 
 	const fetchMentoringList = useCallback(async () => {
@@ -24,7 +26,7 @@ export const useMentoringList = () => {
 			const data = await getMentoringList({offset: currentPage, size});
 			setMentoringList(data.content);
 			setTotalPages(data.totalPages);
-		} catch (e) {
+		} catch {
 			setIsError(true);
 		} finally {
 			setIsLoading(false);
@@ -33,15 +35,12 @@ export const useMentoringList = () => {
 
 	useEffect(() => {
 		fetchMentoringList();
-
-		return () => {};
 	}, [fetchMentoringList]);
 
 	return {
 		categoryInfo: {
-			category,
-			setCategory,
-			newCategories,
+			selectedCategory,
+			setSelectedCategory,
 		},
 		pageInfo: {
 			currentPage,
