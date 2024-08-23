@@ -4,7 +4,11 @@ import {axiosInstance} from './axiosInstance';
 import {SignupParams, LoginParams} from '../types/api';
 
 export const signup = async (data: SignupParams) => {
-	await axiosInstance.post('/member/signup', data);
+	try {
+		await axiosInstance.post('/member/signup', data);
+	} catch (error) {
+		console.error('회원가입 실패', error);
+	}
 };
 
 export const login = async (body: LoginParams) => {
@@ -12,7 +16,7 @@ export const login = async (body: LoginParams) => {
 		const res = await axiosInstance.post('/auth/login', createLoginPayload(body));
 		handleLoginResponseToken(res);
 	} catch (error) {
-		console.error(`login 함수에서 문제 발생`);
+		console.error(`로그인 실패`, error);
 		throw error;
 	}
 };

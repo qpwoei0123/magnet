@@ -4,11 +4,20 @@ import {axiosInstanceWithAuth, axiosInstance} from './axiosInstance';
 
 export const createMentor = async (params: CreateMentorParams) => {
 	await axiosInstanceWithAuth.post(`/mentor/create`, params);
+	try {
+	} catch (error) {
+		console.error('멘토 생성 실패', error);
+	}
 };
 
 export const getMentor = async (): Promise<Mentor> => {
-	const {data} = await axiosInstanceWithAuth.get(`/mentor/get`);
-	return data;
+	try {
+		const {data} = await axiosInstanceWithAuth.get(`/mentor/get`);
+		return data;
+	} catch (error) {
+		console.error('멘토 불러오기 실패', error);
+		throw error;
+	}
 };
 
 const getMentorListURLGenerator = ({offset, size}: GetMentorListParams) => {
@@ -16,7 +25,12 @@ const getMentorListURLGenerator = ({offset, size}: GetMentorListParams) => {
 };
 
 export const getMentorList = async (prams: GetMentorListParams): Promise<GetMentorListResponse> => {
-	const url = getMentorListURLGenerator(prams);
-	const {data} = await axiosInstance.get(url);
-	return data;
+	try {
+		const url = getMentorListURLGenerator(prams);
+		const {data} = await axiosInstance.get(url);
+		return data;
+	} catch (error) {
+		console.error('멘토 리스트 불러오기 실패', error);
+		throw error;
+	}
 };
