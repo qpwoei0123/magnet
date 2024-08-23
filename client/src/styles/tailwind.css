@@ -18,6 +18,9 @@
     .flexCenter {
       @apply flex items-center justify-center;
     }
+    .flexCenterCol {
+      @apply flexCenter flex-col
+    }
     .flexCol{
       @apply flex flex-col;
     }

@@ -2,7 +2,7 @@ import {Route, Routes} from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import SignupPage from './pages/SignupPage';
 import Authpage from './pages/AuthPage';
-import MentorListPage from './pages/MentorListPage';
+import MentorListPage from './pages/mentor-list/MentorListPage';
 import PaymentCompletedPage from './pages/PaymentCompletedPage';
 import UserPage from './pages/UserPage';
 import CreateMentoringPage from './pages/CreateMentoringPage';

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 
 const baseUrl = process.env.REACT_APP_BASE_URL || 'NO_BASE_URL';
 
@@ -8,6 +8,7 @@ export const axiosInstance = axios.create({
 	headers: {
 		'Content-Type': 'application/json',
 	},
+	timeout: 1000 * 10, // 10초 타임아웃 설정
 });
 
 // 토큰 전용 인스턴스 (토큰이 필요한 요청 전용)
@@ -16,6 +17,7 @@ export const axiosInstanceWithAuth = axios.create({
 	headers: {
 		'Content-Type': 'application/json',
 	},
+	timeout: 1000 * 10, // 10초 타임아웃 설정
 });
 
 axiosInstanceWithAuth.interceptors.request.use(
@@ -37,6 +39,37 @@ axiosInstanceWithAuth.interceptors.request.use(
 	},
 	error => {
 		return Promise.reject(error);
+	},
+);
+
+// 응답 인터셉터를 통해 에러 핸들링 추가
+axiosInstanceWithAuth.interceptors.response.use(
+	response => {
+		return response;
+	},
+	(error: AxiosError) => {
+		if (axios.isAxiosError(error)) {
+			throw new Error(
+				`${error.message}: ${error.response ? error.response.statusText + error.response.status : '응답없음'}`,
+			);
+		} else {
+			throw error;
+		}
+	},
+);
+
+axiosInstance.interceptors.response.use(
+	response => {
+		return response;
+	},
+	(error: AxiosError) => {
+		if (axios.isAxiosError(error)) {
+			throw new Error(
+				`${error.message}: ${error.response ? error.response.statusText + error.response.status : '응답없음'}`,
+			);
+		} else {
+			throw error;
+		}
 	},
 );
 

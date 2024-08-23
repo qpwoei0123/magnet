@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {useNavigate, useSearchParams} from 'react-router-dom';
 import {createMentee} from '../api/mentee';
 import {sendPaymentSuccessToServer} from '../api/payments';
-import {LodingContainer} from '../component/common/LoadingContainer';
+import {LoadingContainer} from '../component/loading-error/LoadingContainer';
 import {getMember} from '../api/member';
 
 const PaymentCompletedPage = () => {
@@ -63,7 +63,7 @@ const PaymentCompletedPage = () => {
 	return (
 		<div className="flexCenter w-full flex-col gap-20 py-14">
 			{isLoading ? (
-				<LodingContainer />
+				<LoadingContainer />
 			) : (
 				<>
 					<section className="flexCol items-center gap-10">
