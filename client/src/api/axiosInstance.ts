@@ -8,6 +8,7 @@ export const axiosInstance = axios.create({
 	headers: {
 		'Content-Type': 'application/json',
 	},
+	timeout: 5000, // 5초 타임아웃 설정
 });
 
 // 토큰 전용 인스턴스 (토큰이 필요한 요청 전용)
@@ -16,6 +17,7 @@ export const axiosInstanceWithAuth = axios.create({
 	headers: {
 		'Content-Type': 'application/json',
 	},
+	timeout: 5000, // 5초 타임아웃 설정
 });
 
 axiosInstanceWithAuth.interceptors.request.use(
