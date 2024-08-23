@@ -1,5 +1,5 @@
 import {MentoringStore} from '../../store/MentoringStore';
-import {LoadingContainer} from '../common/LoadingContainer';
+import {LoadingContainer} from '../loading-error/LoadingContainer';
 
 export const PageThree = () => {
 	const {mentoringData} = MentoringStore();

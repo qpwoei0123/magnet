@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {useNavigate, useSearchParams} from 'react-router-dom';
 import {createMentee} from '../api/mentee';
 import {sendPaymentSuccessToServer} from '../api/payments';
-import {LoadingContainer} from '../component/common/LoadingContainer';
+import {LoadingContainer} from '../component/loading-error/LoadingContainer';
 import {getMember} from '../api/member';
 
 const PaymentCompletedPage = () => {

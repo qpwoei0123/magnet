@@ -1,4 +1,4 @@
-import {LoadingContainer} from '../component/common/LoadingContainer';
+import {LoadingContainer} from '../component/loading-error/LoadingContainer';
 import {UserInfoSection} from '../component/user/UserInfoSection';
 import {MentorRegistSection} from '../component/user/MentorRegistSection';
 import {MentorScheduleSection} from '../component/user/MentorScheduleSection';

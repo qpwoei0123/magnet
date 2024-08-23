@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {getMentoring} from '../../api/mentoring';
 import {useLocation} from 'react-router-dom';
-import {LoadingContainer} from '../common/LoadingContainer';
+import {LoadingContainer} from '../loading-error/LoadingContainer';
 import {GetMentoringResponse} from '../../types/api';
 
 export const PageOne = () => {
