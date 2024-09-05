@@ -12,7 +12,12 @@ const MentoringListPage = () => {
 			<CategoryButtons {...categoryInfo} />
 			<LoadingErrorWrapper {...status} refetch={refetch}>
 				{mentoringList.length === 0 ? (
-					<EmptySpace />
+				<div className="flexCol mt-20 items-center gap-2 text-secondary">
+					<i className="ri-ghost-line ri-2x animate-pulse "/>
+					<p className="textBase animate-fadeIn transition-opacity delay-300">
+						앗! 여기는 빈 공간이에요...
+					</p>
+				</div>
 				) : (
 					<>
 						<div className="flexCenter w-full flex-wrap gap-10">
@@ -31,13 +36,3 @@ const MentoringListPage = () => {
 
 export default MentoringListPage;
 
-const EmptySpace = () => {
-	return (
-		<div className="flexCol mt-20 items-center gap-2 text-secondary">
-			<i className="ri-ghost-line ri-2x animate-pulse "></i>
-			<p className="textBase animate-fadeIn transition-opacity delay-300">
-				앗! 여기는 빈 공간이에요...
-			</p>
-		</div>
-	);
-};
