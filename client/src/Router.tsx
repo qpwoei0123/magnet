@@ -5,7 +5,7 @@ import Authpage from './pages/AuthPage';
 import MentorListPage from './pages/mentor-list/MentorListPage';
 import PaymentCompletedPage from './pages/PaymentCompletedPage';
 import UserPage from './pages/UserPage';
-import CreateMentoringPage from './pages/CreateMentoringPage';
+import CreateMentoringPage from './pages/create-mentoring/CreateMentoringPage';
 import PaymentFailedPage from './pages/PaymentFailedPage';
 
 export const Router = () => {
