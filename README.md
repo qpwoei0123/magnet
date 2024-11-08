@@ -5,7 +5,7 @@
 
 `프로젝트 기간` : 2023.12 ~ 2024.05
 
-`배포링크` : https://project-magnet.site/
+`배포링크` : [https://project-magnet.site/](http://wonyoungprojects.s3-website-ap-northeast-1.amazonaws.com/)
 <br/>
 
 
