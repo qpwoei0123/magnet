@@ -7,42 +7,35 @@ const appUrl = process.env.REACT_APP_URL || 'NO_APP_URL';
 
 export const openTossPayment = async () => {
 	try {
+		// Mock: 실제 결제 대신 시뮬레이션
 		const amount = Number(sessionStorage.getItem('amount'));
 		const mentoringId = sessionStorage.getItem('mentoringId');
-		const body = {
-			payType: 'CARD',
-			amount: amount,
-			orderName: '포인트 결제',
-			yourSuccessUrl: `${appUrl}/paymentcompleted`,
-			yourFailUrl: `${appUrl}/paymentfailed`,
-			mentoringId: mentoringId,
-		};
-		console.log('body', body);
-		const authorToken = sessionStorage.getItem('Authorization');
-		const refreshToken = sessionStorage.getItem('RefreshToken');
-
-		const res = await axios.post(`${baseUrl}/api/v1/payments/toss`, body, {
-			headers: {
-				'Content-Type': 'application/json',
-				'ngrok-skip-browser-warning': 'true',
-				Authorization: `${authorToken}`,
-				RefreshToken: `${refreshToken}`,
-			},
-		});
-		const data = res.data;
-		console.log('res data', data);
-		const tossPayments = await loadTossPayments(clientKey);
-		tossPayments.requestPayment(data.payType, {
-			amount: data.amount,
-			orderId: data.orderId,
-			orderName: data.orderName,
-			customerName: data.customerName,
-			successUrl: data.successUrl,
-			failUrl: data.failUrl,
-			customerEmail: data.customerEmail,
-		});
+		
+		console.log('모킹 환경: 결제 시뮬레이션 시작');
+		console.log('Amount:', amount, 'MentoringId:', mentoringId);
+		
+		// 모킹 결제 데이터 생성
+		const mockOrderId = `mock_order_${Date.now()}`;
+		const mockPaymentKey = `mock_payment_${Date.now()}`;
+		
+		// 세션에 모킹 결제 데이터 저장
+		sessionStorage.setItem('mockOrderId', mockOrderId);
+		sessionStorage.setItem('mockPaymentKey', mockPaymentKey);
+		
+		// 2초 후 성공 페이지로 이동 (실제 결제 시뮬레이션)
+		setTimeout(() => {
+			const mockParams = new URLSearchParams({
+				paymentKey: mockPaymentKey,
+				orderId: mockOrderId,
+				amount: amount.toString()
+			});
+			window.location.href = `${appUrl}/paymentcompleted?${mockParams.toString()}`;
+		}, 2000);
+		
+		alert('모킹 환경: 2초 후 결제가 완료됩니다.');
+		
 	} catch (error) {
-		console.error('토스 결제창 열기 실패', error);
+		console.error('모킹 결제 시뮬레이션 실패', error);
 	}
 };
 
@@ -54,22 +47,37 @@ type PaymentData = {
 
 export const sendPaymentSuccessToServer = async (paymentData: PaymentData) => {
 	try {
-		const authorToken = sessionStorage.getItem('Authorization');
-		const refreshToken = sessionStorage.getItem('RefreshToken');
-		const response = await axios.get(
-			`${baseUrl}/api/v1/payments/toss/success?paymentKey=${paymentData.paymentKey}&orderId=${paymentData.orderId}&amount=${paymentData.amount}`,
-			{
-				headers: {
-					'Content-Type': 'application/json',
-					'ngrok-skip-browser-warning': 'true',
-					Authorization: authorToken,
-					RefreshToken: refreshToken,
-				},
-			},
-		);
-		console.log('서버에 결제 완료 정보 전송 성공', response);
-		return response.data;
+		// Mock: 결제 성공 정보를 모킹 서버에 저장
+		console.log('모킹 환경: 결제 성공 정보 서버 전송 시뮬레이션');
+		
+		const memberId = sessionStorage.getItem('memberId') || '1';
+		const mentoringId = sessionStorage.getItem('mentoringId') || '1';
+		
+		const mockPaymentRecord = {
+			memberId: parseInt(memberId),
+			mentoringId: parseInt(mentoringId),
+			amount: parseInt(paymentData.amount),
+			paymentKey: paymentData.paymentKey,
+			orderId: paymentData.orderId,
+			status: 'completed',
+			createdAt: new Date().toISOString()
+		};
+		
+		// Mock API에 결제 정보 저장
+		const response = await axios.post(`${baseUrl}/payments`, mockPaymentRecord);
+		console.log('모킹 서버에 결제 완료 정보 전송 성공', response.data);
+		
+		return {
+			success: true,
+			message: '결제가 성공적으로 처리되었습니다.',
+			data: response.data
+		};
 	} catch (error) {
-		console.error('서버에 결제 완료 정보 전송 실패', error);
+		console.error('모킹 결제 정보 전송 실패', error);
+		return {
+			success: false,
+			message: '결제 정보 전송에 실패했습니다.',
+			error: error
+		};
 	}
 };

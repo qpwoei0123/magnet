@@ -8,8 +8,8 @@ const MentorCard = ({mentoring}: {mentoring: Content}) => {
 	const openPaymentModal = useOpenPaymentModal();
 
 	const handleClick = () => {
-		navigate(`/mentorlist?mentoringid=${mentoringId}`);
-		openPaymentModal();
+		// 이미 가지고 있는 데이터를 바로 전달
+		openPaymentModal({ mentoringData: mentoring });
 	};
 
 	return (

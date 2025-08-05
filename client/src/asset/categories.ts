@@ -6,13 +6,11 @@ export type Category = {
 
 export const categories: Category[] = [
 	{title: '전체', id: 'ALL', icon: 'menu-line'},
-	{title: '웹 디자인', id: 'WEB_DESIGN', icon: 'brush-2-line'},
-	{title: 'UI/UX', id: 'UI_UX', icon: 'layout-2-line'},
-	{title: '프로덕트 매니저', id: 'PRODUCT_MANAGER', icon: 'file-list-2-line'},
-	{title: '백엔드', id: 'BACKEND', icon: 'send-to-back'},
-	{title: '프론트엔드', id: 'FRONTEND', icon: 'bring-to-front'},
-	{title: '데브옵스', id: 'DEVOPS', icon: 'cloud-line'},
-	{title: '데이터 엔지니어', id: 'DATA_ENGINEER', icon: 'database-2-line'},
-	{title: '서버 엔지니어', id: 'SERVER_ENGINEER', icon: 'server-line'},
-	{title: 'AI', id: 'AI', icon: 'robot-3-line'},
+	{title: '백엔드', id: '백엔드', icon: 'server-line'},
+	{title: '프론트엔드', id: '프론트엔드', icon: 'code-s-slash-line'},
+	{title: '풀스택', id: '풀스택', icon: 'stack-line'},
+	{title: '아키텍처', id: '아키텍처', icon: 'building-2-line'},
+	{title: 'DevOps', id: 'DevOps', icon: 'cloud-line'},
+	{title: '모바일', id: '모바일', icon: 'smartphone-line'},
+	{title: '데이터베이스', id: '데이터베이스', icon: 'database-2-line'},
 ];

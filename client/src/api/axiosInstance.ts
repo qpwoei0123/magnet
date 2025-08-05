@@ -21,19 +21,25 @@ export const axiosInstanceWithAuth = axios.create({
 });
 
 axiosInstanceWithAuth.interceptors.request.use(
-	// 요청 인터셉터를 통해 토큰 추가
+	// 요청 인터셉터를 통해 토큰 추가 (모킹 환경)
 	config => {
+		// 모킹 환경에서는 토큰 체크를 완화
 		const authorToken = sessionStorage.getItem('Authorization');
 		const refreshToken = sessionStorage.getItem('RefreshToken');
 
+		// 토큰이 없으면 기본 모킹 토큰 사용
 		if (!authorToken && !refreshToken) {
-			return Promise.reject(
-				new Error('Authorization 토큰과 RefreshToken 토큰이 모두 존재하지 않습니다.'),
-			);
+			const mockToken = 'Bearer mock_token_demo';
+			const mockRefreshToken = 'refresh_mock_token_demo';
+			sessionStorage.setItem('Authorization', mockToken);
+			sessionStorage.setItem('RefreshToken', mockRefreshToken);
+			sessionStorage.setItem('memberId', '1');
+			config.headers['Authorization'] = mockToken;
+			config.headers['RefreshToken'] = mockRefreshToken;
+		} else {
+			config.headers['Authorization'] = authorToken;
+			config.headers['RefreshToken'] = refreshToken;
 		}
-
-		config.headers['Authorization'] = authorToken;
-		config.headers['RefreshToken'] = refreshToken;
 
 		return config;
 	},
@@ -42,13 +48,19 @@ axiosInstanceWithAuth.interceptors.request.use(
 	},
 );
 
-// 응답 인터셉터를 통해 에러 핸들링 추가
+// 응답 인터셉터를 통해 에러 핸들링 추가 (모킹 환경)
 axiosInstanceWithAuth.interceptors.response.use(
 	response => {
 		return response;
 	},
 	(error: AxiosError) => {
+		// 모킹 환경에서는 404 에러를 더 관대하게 처리
 		if (axios.isAxiosError(error)) {
+			if (error.response?.status === 404) {
+				// 404 에러는 빈 데이터 반환
+				console.warn('Mock API: Resource not found, returning empty data');
+				return Promise.resolve({ data: null, status: 200, statusText: 'OK', headers: {}, config: error.config });
+			}
 			throw new Error(
 				`${error.message}: ${error.response ? error.response.statusText + error.response.status : '응답없음'}`,
 			);
@@ -63,7 +75,13 @@ axiosInstance.interceptors.response.use(
 		return response;
 	},
 	(error: AxiosError) => {
+		// 모킹 환경에서는 404 에러를 더 관대하게 처리
 		if (axios.isAxiosError(error)) {
+			if (error.response?.status === 404) {
+				// 404 에러는 빈 데이터 반환
+				console.warn('Mock API: Resource not found, returning empty data');
+				return Promise.resolve({ data: [], status: 200, statusText: 'OK', headers: {}, config: error.config });
+			}
 			throw new Error(
 				`${error.message}: ${error.response ? error.response.statusText + error.response.status : '응답없음'}`,
 			);

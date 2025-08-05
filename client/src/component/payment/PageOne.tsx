@@ -1,27 +1,9 @@
-import {useEffect, useState} from 'react';
-import {getMentoring} from '../../api/mentoring';
-import {useLocation} from 'react-router-dom';
 import {LoadingContainer} from '../loading-error/LoadingContainer';
-import {GetMentoringResponse} from '../../types/api';
+import {MentoringStore} from '../../store/MentoringStore';
 
 export const PageOne = () => {
-	const [mentoringData, setMentoringData] = useState<GetMentoringResponse | null>(null);
-	const location = useLocation();
-
-	// 멘토링 정보를 불러온다.
-	useEffect(() => {
-		const fetchMentoringData = async () => {
-			try {
-				const searchParams = new URLSearchParams(location.search);
-				const mentoringid = searchParams.get('mentoringid');
-				const data = await getMentoring(mentoringid ? Number(mentoringid) : 0);
-				setMentoringData(data);
-			} catch (error) {
-				console.error('멘토링 정보를 불러오는 동안 오류가 발생했습니다:', error);
-			}
-		};
-		fetchMentoringData();
-	}, [location.search]);
+	// MentoringStore에서 데이터 가져오기 (중복 API 호출 방지)
+	const {mentoringData} = MentoringStore();
 
 	return mentoringData ? (
 		<>

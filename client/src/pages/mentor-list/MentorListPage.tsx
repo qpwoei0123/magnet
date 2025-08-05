@@ -11,13 +11,13 @@ const MentoringListPage = () => {
 		<section className="flexCol rootPageSection items-center gap-10 py-10 sm:px-10">
 			<CategoryButtons {...categoryInfo} />
 			<LoadingErrorWrapper {...status} refetch={refetch}>
-				{mentoringList.length === 0 ? (
+				{!mentoringList || mentoringList.length === 0 ? (
 					<EmptySpace />
 				) : (
 					<>
 						<div className="flexCenter w-full flex-wrap gap-10">
 							{mentoringList.map((el, index) => (
-								<MentorCard key={index} mentoring={el} />
+								<MentorCard key={`mentoring-${el.mentoringId || index}`} mentoring={el} />
 							))}
 						</div>
 
