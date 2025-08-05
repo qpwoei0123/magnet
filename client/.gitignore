@@ -50,8 +50,15 @@ psd
 thumb
 sketch
 
-db.json
-.env
+# 백엔드 독립 환경을 위해 기본 설정 파일들 포함
+# db.json
+# .env
+
+# 대신 사용자별 환경변수만 제외
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 build.zip
 ### VisualStudioCode ###
 .vscode/*

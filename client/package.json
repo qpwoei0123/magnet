@@ -34,7 +34,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "gh-pages -d build",
-    "server": "json-server --watch ./src/db/db.json --port 3001"
+    "server": "json-server --watch db.json --port 3001"
   },
   "eslintConfig": {
     "extends": [
@@ -57,6 +57,7 @@
   "devDependencies": {
     "autoprefixer": "^10.4.16",
     "gh-pages": "^6.1.1",
+    "json-server": "^1.0.0-beta.3",
     "postcss": "^8.4.32",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.11",
