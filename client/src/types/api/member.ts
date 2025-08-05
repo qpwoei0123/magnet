@@ -14,5 +14,6 @@ export type GetMemberResponse = {
 };
 export type UpdateMemberParams = {
 	nickName: string;
-	addressDto: {city: string; street: string};
+	phone?: string;
+	addressDto?: {city: string; street: string};
 };
