@@ -7,20 +7,6 @@
       "nickname": "데모유저",
       "isLogin": true,
       "createdAt": "2024-01-01T00:00:00Z"
-    },
-    {
-      "id": "3d69",
-      "email": "qpwoei01234@gmail.com",
-      "username": "바바",
-      "password": "dnjsdud12",
-      "nickName": "바바바",
-      "phone": "010-2342-1234",
-      "addressDto": {
-        "city": "city",
-        "street": "street"
-      },
-      "isLogin": false,
-      "createdAt": "2025-08-05T05:04:23.267Z"
     }
   ],
   "mentors": [
@@ -98,18 +84,6 @@
           "category": "풀스택"
         }
       ]
-    },
-    {
-      "id": "c966",
-      "mentorName": "마마마",
-      "field": "BACKEND",
-      "career": "4~8년 미들",
-      "task": "123",
-      "email": "qpwoei01234@gmail.com",
-      "phone": "010-1234-1234",
-      "aboutMe": "123",
-      "github": "",
-      "mentoringDtoList": []
     }
   ],
   "mentorings": [
@@ -417,16 +391,6 @@
       "pay": "50000",
       "participants": 5,
       "category": "백엔드"
-    },
-    {
-      "id": "1a4b",
-      "mentoringId": 0,
-      "schedule": "",
-      "phone": "123123",
-      "message": "12321312",
-      "paymentKey": "mock_payment_1754371368016",
-      "email": "3123123",
-      "memberId": null
     }
   ],
   "payments": [
@@ -438,26 +402,6 @@
       "paymentKey": "test_payment_key_1",
       "orderId": "order_123456",
       "status": "completed"
-    },
-    {
-      "id": "9592",
-      "memberId": 3,
-      "mentoringId": 1,
-      "amount": 0,
-      "paymentKey": "mock_payment_1754370493844",
-      "orderId": "mock_order_1754370493844",
-      "status": "completed",
-      "createdAt": "2025-08-05T05:08:19.991Z"
-    },
-    {
-      "id": "9eef",
-      "memberId": null,
-      "mentoringId": 1,
-      "amount": 0,
-      "paymentKey": "mock_payment_1754371368016",
-      "orderId": "mock_order_1754371368016",
-      "status": "completed",
-      "createdAt": "2025-08-05T05:22:50.480Z"
     }
   ]
 }
