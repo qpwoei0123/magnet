@@ -16,6 +16,40 @@
 - Zustand
 - TailwindCss
 - axios
+
+<br/>
+
+## 로컬에서 실행하기
+
+> **🚀 백엔드 독립형 모드로 구성됨**
+> 이 프로젝트는 백엔드 서버 없이도 완전히 작동하도록 설정되어 있습니다.
+
+### 1. 의존성 설치
+`client` 디렉토리로 이동하여 필요한 라이브러리를 설치합니다.
+```bash
+cd client
+npm install
+```
+
+### 2. 개발 서버 실행
+
+**터미널 1 - Mock API 서버 실행:**
+```bash
+# client 디렉토리에서 실행
+npm run server
+```
+- Mock API가 http://localhost:3001 에서 실행됩니다
+
+**터미널 2 - React 앱 실행:**
+```bash
+# client 디렉토리에서 실행
+npm start
+```
+- 앱이 http://localhost:3000 에서 실행됩니다
+
+### 3. 테스트 계정으로 로그인
+- 이메일: `demo@example.com`
+- 비밀번호: `password123`
   
 <br/>
 
