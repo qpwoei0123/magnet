@@ -5,7 +5,7 @@
 
 `프로젝트 기간` : 2023.12 ~ 2024.05
 
-`배포링크` : [https://project-magnet.site/](http://wonyoungprojects.s3-website-ap-northeast-1.amazonaws.com/)
+`배포링크` : [http://wonyoungprojects.s3-website-ap-northeast-1.amazonaws.com/](http://wonyoungprojects.s3-website-ap-northeast-1.amazonaws.com/)
 <br/>
 
 
@@ -17,6 +17,38 @@
 - TailwindCss
 - axios
   
+<br/>
+
+## 🚀 로컬에서 실행하기 (How to Run Locally)
+
+이 프로젝트는 백엔드 없이 프론트엔드 단독으로 실행 가능하도록 `json-server`를 이용한 모킹 환경이 구축되어 있습니다.
+
+### 1. 클라이언트 디렉토리로 이동
+```bash
+cd client
+```
+
+### 2. 의존성 설치
+```bash
+npm install
+```
+
+### 3. 개발 서버 실행
+프로젝트를 실행하려면 두 개의 터미널이 필요합니다.
+
+**첫 번째 터미널 - Mock API 서버 실행:**
+```bash
+npm run server
+```
+> Mock API 서버가 `http://localhost:3001`에서 실행됩니다.
+
+**두 번째 터미널 - React 앱 실행:**
+```bash
+npm start
+```
+> React 애플리케이션이 `http://localhost:3000`에서 실행됩니다.
+
+더 자세한 내용은 [클라이언트 README](./client/readme.md) 파일을 참고해주세요.
 <br/>
 
 ## 기여한 부분
