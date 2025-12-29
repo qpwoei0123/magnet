@@ -1,6 +1,6 @@
 import {useState, useEffect, useCallback, useMemo} from 'react';
-import {getMentoringList} from '../../api/mentoring';
-import {Content} from '../../types/api/mentoring';
+import {getMentorList} from '../../api/mentor';
+import {Content} from '../../types/api/mentor';
 
 export const useMentoringList = () => {
 	const [selectedCategory, setSelectedCategory] = useState('ALL');
@@ -16,7 +16,7 @@ export const useMentoringList = () => {
 		() =>
 			selectedCategory === 'ALL'
 				? allMentoringList
-				: allMentoringList.filter(el => el.category === selectedCategory),
+				: allMentoringList.filter(el => el.field === selectedCategory),
 		[allMentoringList, selectedCategory],
 	);
 
@@ -37,23 +37,15 @@ export const useMentoringList = () => {
 		setIsError(false);
 		try {
 			// 모든 데이터를 가져옴 (클라이언트 사이드에서 필터링/페이지네이션)
-			const data = await getMentoringList({offset: 0, size: 1000}); // 대량 데이터 가져오기
-			
-			// 0.5~1.5초 랜덤 로딩 시간 (리스트 로딩용)
-			const randomDelay = Math.random() * 1000 + 500; // 500-1500ms
-			
-			setTimeout(() => {
-				// 안전하게 데이터 처리
-				setAllMentoringList(data?.content || []);
-				setIsLoading(false);
-			}, randomDelay);
-			
+			const data = await getMentorList({offset: 0, size: 1000}); // 대량 데이터 가져오기
+			setAllMentoringList(data?.content || []);
 		} catch (error) {
 			console.error('멘토링 리스트 로드 실패:', error);
 			setIsError(true);
-			setIsLoading(false);
 			// 에러 시 빈 배열로 초기화
 			setAllMentoringList([]);
+		} finally {
+			setIsLoading(false);
 		}
 	}, []);
 

@@ -1,9 +1,9 @@
 import {useNavigate} from 'react-router-dom';
-import {Content} from '../types/api';
+import {Content} from '../types/api/mentor';
 import {useOpenPaymentModal} from '../hooks/useOpenModals';
 
 const MentorCard = ({mentoring}: {mentoring: Content}) => {
-	const {mentorName, mentoringId, career, field, task, title, category} = mentoring;
+	const {mentorName, career, field, task, mentoringTitle, mentoringCategory} = mentoring;
 	const navigate = useNavigate();
 	const openPaymentModal = useOpenPaymentModal();
 
@@ -19,8 +19,8 @@ const MentorCard = ({mentoring}: {mentoring: Content}) => {
 			 rounded-lg bg-background p-5 shadow-lg sm:h-60 sm:w-96"
 		>
 			<div className="textBase flexCol w-full flex-grow items-start gap-2">
-				<p className="truncate font-PartialSansKR_Regular">{`${category}`}</p>
-				<div className="textBase line-clamp-2 h-3/5">{title}</div>
+				<p className="truncate font-PartialSansKR_Regular">{`${mentoringCategory}`}</p>
+				<div className="textBase line-clamp-2 h-3/5">{mentoringTitle}</div>
 			</div>
 
 			<div className="flexCol items-start gap-1 pt-2">

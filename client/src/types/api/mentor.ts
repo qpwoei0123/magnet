@@ -25,7 +25,7 @@ export type GetMentorListResponse = {
 	empty: boolean;
 };
 
-type Content = {
+export type Content = {
 	mentorId: number;
 	mentorName: string;
 	career: string;
