@@ -1,85 +1,101 @@
-import axiosInstance, {axiosInstanceWithAuth} from './axiosInstance';
 import {
 	CreateMentoringParams,
 	GetMentoringResponse,
 	GetMentoringListParams,
 	GetMentoringListResponse,
+	Content,
 } from '../types/api/mentoring';
+import db from '../../db.json';
+
+// Helper to delay response for realistic feel
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const createMentoring = async (params: CreateMentoringParams) => {
-	try {
-		// Mock: 멘토링 생성
-		const mentorId = sessionStorage.getItem('mentorId') || '1';
-		const newMentoring = {
-			...params,
-			mentorId: parseInt(mentorId),
-			status: 'active'
-		};
-		await axiosInstanceWithAuth.post(`/mentorings`, newMentoring);
-	} catch (error) {
-		console.error('멘토링 생성 실페', error);
-	}
+	await delay(500);
+	console.log('Mock Create Mentoring:', params);
+	// In a real static demo, we can't persist this permanently,
+	// but we could theoretically update a local state or just return success.
+	return;
 };
 
 export const getMentoring = async (mentoringId: number): Promise<GetMentoringResponse> => {
-	try {
-		// Mock: mentoringId로 멘토링 조회
-		const {data} = await axiosInstance.get(`/mentorings/${mentoringId}`);
-		// 세션 스토리지 저장방식 (임시)
-		sessionStorage.setItem('mentoringId', data.mentoringId.toString());
-		sessionStorage.setItem('schedule', data.period);
-		sessionStorage.setItem('amount', data.pay);
-		return data;
-	} catch (error) {
-		console.error('멘토링 가져오기 실페', error);
-		throw error;
+	await delay(300);
+
+	const mentoring = db.mentorings.find(m => m.mentoringId === mentoringId);
+	if (!mentoring) {
+		throw new Error('Mentoring not found');
 	}
+
+	// Join with Mentor data to get missing fields
+	const mentor = db.mentors.find(m => m.mentorId === mentoring.mentorId);
+
+	// Construct the full response merging mentoring and mentor data
+	const result: GetMentoringResponse = {
+		...mentoring,
+		// Ensure fields from mentor are present if missing in mentoring
+		career: mentoring.career || mentor?.career || '시니어',
+		field: mentoring.field || mentor?.field || mentoring.category,
+		task: mentoring.task || mentor?.task || '',
+		email: mentor?.email || 'demo@example.com',
+		phone: mentor?.phone || '010-0000-0000',
+		aboutMe: mentoring.aboutMe || mentor?.aboutMe || '자기소개가 없습니다.',
+		github: mentor?.github || '',
+		mentorName: mentor?.mentorName || mentoring.mentorName || '알 수 없음',
+	};
+
+	// Side effects from original code
+	sessionStorage.setItem('mentoringId', result.mentoringId.toString());
+	sessionStorage.setItem('schedule', result.period);
+	sessionStorage.setItem('amount', result.pay);
+
+	return result;
 };
 
 export const getMentoringList = async (
 	params: GetMentoringListParams,
 ): Promise<GetMentoringListResponse> => {
-	try {
-		const url = getMentoringListURLGenerator(params);
-		const {data} = await axiosInstance.get(url);
-		
-		// Mock: 클라이언트 사이드에서 페이지네이션 처리
-		const allData = data || [];
-		const totalElements = allData.length;
-		const totalPages = Math.ceil(totalElements / params.size);
-		const startIndex = params.offset * params.size;
-		const endIndex = startIndex + params.size;
-		const pageData = allData.slice(startIndex, endIndex);
-		
-		const mockResponse: GetMentoringListResponse = {
-			content: pageData,
-			pageable: {
-				pageNumber: params.offset,
-				pageSize: params.size,
-				sort: { empty: true, sorted: false, unsorted: true },
-				offset: startIndex,
-				unpaged: false,
-				paged: true
-			},
-			last: params.offset >= totalPages - 1,
-			totalPages: totalPages,
-			totalElements: totalElements,
-			size: params.size,
-			number: params.offset,
-			sort: { empty: true, sorted: false, unsorted: true },
-			first: params.offset === 0,
-			numberOfElements: pageData.length,
-			empty: pageData.length === 0
+	await delay(500);
+
+	// Join all mentorings with their mentor names for the list view
+	// The `Content` type in `GetMentoringListResponse` needs `mentorName`
+	const allData: Content[] = db.mentorings.map(mentoring => {
+		const mentor = db.mentors.find(m => m.mentorId === mentoring.mentorId);
+		return {
+			...mentoring,
+			mentorName: mentor?.mentorName || mentoring.mentorName || 'Unknown',
+			aboutMe: mentoring.aboutMe || mentor?.aboutMe || '',
+			field: mentoring.field || mentor?.field || '',
+			task: mentoring.task || mentor?.task || '',
+			career: mentoring.career || mentor?.career || '',
 		};
-		
-		return mockResponse;
-	} catch (err) {
-		console.error('멘토링리스트 가져오기 실패', err);
-		throw err;
-	}
-};
-const getMentoringListURLGenerator = ({offset, size}: GetMentoringListParams) => {
-	// Mock: JSON Server는 _page와 _limit 사용
-	// 모든 데이터를 가져와서 클라이언트에서 페이지네이션 처리
-	return `/mentorings`;
+	});
+
+	const totalElements = allData.length;
+	const totalPages = Math.ceil(totalElements / params.size);
+	const startIndex = params.offset * params.size;
+	const endIndex = startIndex + params.size;
+	const pageData = allData.slice(startIndex, endIndex);
+
+	const mockResponse: GetMentoringListResponse = {
+		content: pageData,
+		pageable: {
+			pageNumber: params.offset,
+			pageSize: params.size,
+			sort: { empty: true, sorted: false, unsorted: true },
+			offset: startIndex,
+			unpaged: false,
+			paged: true
+		},
+		last: params.offset >= totalPages - 1,
+		totalPages: totalPages,
+		totalElements: totalElements,
+		size: params.size,
+		number: params.offset,
+		sort: { empty: true, sorted: false, unsorted: true },
+		first: params.offset === 0,
+		numberOfElements: pageData.length,
+		empty: pageData.length === 0
+	};
+
+	return mockResponse;
 };

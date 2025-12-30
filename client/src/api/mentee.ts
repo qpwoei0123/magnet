@@ -1,5 +1,5 @@
 import {CreateMenteeParams} from '../types/api';
-import {axiosInstanceWithAuth} from './axiosInstance';
+// import {axiosInstanceWithAuth} from './axiosInstance';
 
 export const createMentee = async (params: CreateMenteeParams) => {
 	try {
@@ -7,12 +7,9 @@ export const createMentee = async (params: CreateMenteeParams) => {
 		const memberId = sessionStorage.getItem('memberId');
 		if (!memberId) throw new Error('로그인이 필요합니다.');
 		
-		const newMentee = {
-			...params,
-			memberId: parseInt(memberId)
-		};
-		const {data} = await axiosInstanceWithAuth.post(`/mentees`, newMentee);
-		return data;
+		console.log('Mock Create Mentee:', params);
+		// In a real static demo, just return success
+		return { success: true };
 	} catch (error) {
 		console.error('멘티 생성 실패', error);
 	}
@@ -21,8 +18,8 @@ export const createMentee = async (params: CreateMenteeParams) => {
 export const getMenteeList = async (mentoringId: number) => {
 	try {
 		// Mock: mentoringId로 멘티 리스트 조회
-		const {data} = await axiosInstanceWithAuth.get(`/mentees?mentoringId=${mentoringId}`);
-		return data;
+		console.log(`Mock Get Mentee List for mentoringId: ${mentoringId}`);
+		return [];
 	} catch (error) {
 		console.error('멘티 리스트 불러오기 실패', error);
 	}
