@@ -18,6 +18,13 @@ export const getMember = async (): Promise<GetMemberResponse> => {
 		throw new Error('Member not found');
 	}
 
+	const mentorEntry = db.mentors.find(m => m.mentorId === member.id);
+	const menteeEntries = db.mentees.filter(m => m.memberId === member.id);
+
+	const roles = ['USER'];
+	if (mentorEntry) roles.push('MENTOR');
+	if (menteeEntries.length > 0) roles.push('MENTEE');
+
 	// Transform db data to GetMemberResponse type
 	const memberData: GetMemberResponse = {
 		id: member.id,
@@ -29,9 +36,9 @@ export const getMember = async (): Promise<GetMemberResponse> => {
 		street: '강남구', // Mock data
 		picture: null,
 		memberStatus: 'ACTIVE',
-		roles: ['USER'],
-		menteeList: null,
-		mentorList: null,
+		roles: roles,
+		menteeList: menteeEntries.length > 0 ? menteeEntries : null,
+		mentorList: mentorEntry ? [mentorEntry] : null,
 	};
 
 	// Save to global store
