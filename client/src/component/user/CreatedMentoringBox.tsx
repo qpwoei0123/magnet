@@ -10,7 +10,7 @@ export const CreatedMentoringBox = ({mentoringDto}: {mentoringDto: MentoringDto}
 	const handleClick = async () => {
 		try {
 			const data = await getMenteeList(mentoringDto.id); // mentoring 데이터 가져오기
-			openMenteeListModal(data); // 멘티 리스트 모달 열기
+			openMenteeListModal({ menteeList: data }); // 멘티 리스트 모달 열기
 		} catch (error) {
 			console.error('getMentoring 호출 중 오류 발생:', error);
 		}

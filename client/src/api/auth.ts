@@ -1,85 +1,67 @@
-import {AxiosResponse} from 'axios';
-import {saveAuthTokens} from '../utils/auth/saveAuthTokens';
-import {axiosInstance} from './axiosInstance';
-import {SignupParams, LoginParams} from '../types/api';
-import {registerUser, loginUser, logoutUser, initializeDemoUser} from '../utils/auth/localStorageAuth';
+import { SignupParams, LoginParams } from '../types/api';
+import db from '../db.json';
+
+// Helper to delay response for realistic feel
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const signup = async (data: SignupParams) => {
-	try {
-		// localStorage 기반 회원가입
-		const result = registerUser({
-			email: data.email,
-			password: data.password,
-			nickname: data.nickName || data.email.split('@')[0],
-			username: data.username,
-			phone: data.phone,
-			addressDto: data.addressDto && data.addressDto.city && data.addressDto.street ? {
-			city: data.addressDto.city,
-			street: data.addressDto.street
-		} : undefined
-		});
+	await delay(500);
 
-		if (!result.success) {
-			throw new Error(result.message);
-		}
+	const existingUser = db.members.find(user => user.email === data.email);
 
-		console.log('회원가입 성공:', result.user);
-		return result;
-	} catch (error) {
-		console.error('회원가입 실패', error);
-		throw error;
+	if (existingUser) {
+		throw new Error('User with this email already exists.');
 	}
+
+	const newUser = {
+		id: db.members.length + 1,
+		email: data.email,
+		password: data.password, // In a real app, hash this!
+		nickname: data.nickName || data.email.split('@')[0],
+		isLogin: false,
+		createdAt: new Date().toISOString(),
+	};
+
+	// Note: This only adds to the in-memory db.json, it won't persist.
+	db.members.push(newUser);
+
+	console.log('Mock Signup Success:', newUser);
+
+	return {
+		success: true,
+		user: newUser,
+	};
 };
 
 export const login = async (body: LoginParams) => {
-	try {
-		// 데모 사용자 초기화
-		initializeDemoUser();
+	await delay(500);
+	const user = db.members.find(u => u.email === body.email && u.password === body.password);
 
-		// localStorage 기반 로그인
-		const result = loginUser(body.email, body.password);
+	if (user) {
+		// Simulate token-based auth by setting sessionStorage
+		const mockToken = `Bearer mock_token_${user.id}_${Date.now()}`;
+		const mockRefreshToken = `refresh_mock_token_${user.id}_${Date.now()}`;
 
-		if (!result.success) {
-			throw new Error(result.message);
-		}
+		sessionStorage.setItem('Authorization', mockToken);
+		sessionStorage.setItem('RefreshToken', mockRefreshToken);
+		sessionStorage.setItem('memberId', user.id.toString());
 
-		console.log('로그인 성공:', result.user);
-		return result;
-	} catch (error) {
-		console.error(`로그인 실패`, error);
-		throw error;
+		console.log('Mock Login Success:', user);
+
+		return {
+			success: true,
+			user: { ...user, isLogin: true },
+		};
+	} else {
+		throw new Error('Invalid email or password');
 	}
-};
-// 백엔드에서 수정할 떄 까지 임시로.
-const createLoginPayload = (body: LoginParams) => ({
-	username: body.email,
-	password: body.password,
-});
-// 응답에 대한 토큰 조작
-const handleLoginResponseToken = (response: AxiosResponse) => {
-	const authHeader = response.headers.authorization;
-	const refreshTokenHeader = response.headers.refreshtoken;
-
-	if (!authHeader) {
-		throw new Error('Authorization 헤더가 누락되었습니다.');
-	}
-	if (!refreshTokenHeader) {
-		throw new Error('RefreshToken 헤더가 누락되었습니다.');
-	}
-
-	saveAuthTokens({
-		Authorization: authHeader,
-		RefreshToken: refreshTokenHeader,
-	});
 };
 
 export const logout = async () => {
-	try {
-		// localStorage 기반 로그아웃
-		logoutUser();
-		console.log('로그아웃 완료');
-	} catch (error) {
-		console.error('로그아웃 실패', error);
-		throw error;
-	}
+	await delay(300);
+	// Clear session storage to simulate logout
+	sessionStorage.removeItem('Authorization');
+	sessionStorage.removeItem('RefreshToken');
+	sessionStorage.removeItem('memberId');
+	console.log('Mock Logout Success');
 };

@@ -39,14 +39,9 @@ export const useMentoringList = () => {
 			// 모든 데이터를 가져옴 (클라이언트 사이드에서 필터링/페이지네이션)
 			const data = await getMentoringList({offset: 0, size: 1000}); // 대량 데이터 가져오기
 			
-			// 0.5~1.5초 랜덤 로딩 시간 (리스트 로딩용)
-			const randomDelay = Math.random() * 1000 + 500; // 500-1500ms
-			
-			setTimeout(() => {
-				// 안전하게 데이터 처리
-				setAllMentoringList(data?.content || []);
-				setIsLoading(false);
-			}, randomDelay);
+			// 안전하게 데이터 처리
+			setAllMentoringList(data?.content || []);
+			setIsLoading(false);
 			
 		} catch (error) {
 			console.error('멘토링 리스트 로드 실패:', error);
