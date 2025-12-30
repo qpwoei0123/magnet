@@ -1,10 +1,8 @@
-import {useNavigate} from 'react-router-dom';
 import {Content} from '../types/api';
 import {useOpenPaymentModal} from '../hooks/useOpenModals';
 
 const MentorCard = ({mentoring}: {mentoring: Content}) => {
-	const {mentorName, mentoringId, career, field, task, title, category} = mentoring;
-	const navigate = useNavigate();
+	const {mentorName, career, field, task, title, category} = mentoring;
 	const openPaymentModal = useOpenPaymentModal();
 
 	const handleClick = () => {
