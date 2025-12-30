@@ -23,6 +23,7 @@ export type GetMentoringResponse = {
 	phone: string;
 	aboutMe: string;
 	github: string;
+	mentorName?: string; // Added optional property
 };
 
 export type GetMentoringListParams = {offset: number; size: number};

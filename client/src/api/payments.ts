@@ -1,9 +1,11 @@
-import axios from 'axios';
-import {loadTossPayments} from '@tosspayments/payment-sdk';
+// import axios from 'axios';
+// import {loadTossPayments} from '@tosspayments/payment-sdk';
 
-const clientKey = process.env.REACT_APP_TOSS_CLIENT_KEY || 'NO_CLIENT_KEY';
-const baseUrl = process.env.REACT_APP_BASE_URL || 'NO_BASE_URL';
-const appUrl = process.env.REACT_APP_URL || 'NO_APP_URL';
+// const clientKey = process.env.REACT_APP_TOSS_CLIENT_KEY || 'NO_CLIENT_KEY';
+// const baseUrl = process.env.REACT_APP_BASE_URL || 'NO_BASE_URL';
+// const appUrl = process.env.REACT_APP_URL || 'NO_APP_URL';
+// Use window.location.origin to support any deployment URL (S3, Vercel, Localhost)
+const appUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
 
 export const openTossPayment = async () => {
 	try {
@@ -64,13 +66,13 @@ export const sendPaymentSuccessToServer = async (paymentData: PaymentData) => {
 		};
 		
 		// Mock API에 결제 정보 저장
-		const response = await axios.post(`${baseUrl}/payments`, mockPaymentRecord);
-		console.log('모킹 서버에 결제 완료 정보 전송 성공', response.data);
+		// const response = await axios.post(`${baseUrl}/payments`, mockPaymentRecord);
+		console.log('모킹 서버에 결제 완료 정보 전송 성공 (Simulated)', mockPaymentRecord);
 		
 		return {
 			success: true,
 			message: '결제가 성공적으로 처리되었습니다.',
-			data: response.data
+			data: mockPaymentRecord
 		};
 	} catch (error) {
 		console.error('모킹 결제 정보 전송 실패', error);

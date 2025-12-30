@@ -1,52 +1,78 @@
 import {Mentor} from '../types';
 import {CreateMentorParams, GetMentorListResponse, GetMentorListParams} from '../types/api';
-import {axiosInstanceWithAuth, axiosInstance} from './axiosInstance';
+// import {axiosInstanceWithAuth, axiosInstance} from './axiosInstance';
+import db from '../../db.json';
+
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const createMentor = async (params: CreateMentorParams) => {
+	await delay(500);
 	try {
 		// Mock: 멘토 생성
 		const memberId = sessionStorage.getItem('memberId');
 		if (!memberId) throw new Error('로그인이 필요합니다.');
 		
-		const newMentor = {
-			...params,
-			mentoringDtoList: []
-		};
-		await axiosInstanceWithAuth.post(`/mentors`, newMentor);
+		console.log('Mock Create Mentor:', params);
+		return;
 	} catch (error) {
 		console.error('멘토 생성 실패', error);
 	}
 };
 
 export const getMentor = async (): Promise<Mentor> => {
+	await delay(300);
 	try {
 		// Mock: 현재 로그인한 사용자의 멘토 정보 조회
 		const memberId = sessionStorage.getItem('memberId');
-		if (!memberId) throw new Error('로그인이 필요합니다.');
+		// if (!memberId) throw new Error('로그인이 필요합니다.');
 		
-		// 모킹 환경에서는 첫 번째 멘토 데이터 반환
-		const {data} = await axiosInstanceWithAuth.get(`/mentors/1`);
-		return data;
+		// Always return the first mentor as demo
+		const mentor = db.mentors[0];
+		if (!mentor) throw new Error('Mentor not found');
+
+		// Ensure types match
+		// Mentor type requires mentoringDtoList
+		return mentor as unknown as Mentor;
 	} catch (error) {
 		console.error('멘토 불러오기 실패', error);
 		throw error;
 	}
 };
 
-const getMentorListURLGenerator = ({offset, size}: GetMentorListParams) => {
-	// Mock: JSON Server는 _page와 _limit 사용
-	// 모든 데이터를 가져와서 클라이언트에서 페이지네이션 처리
-	return `/mentors`;
-};
-
 export const getMentorList = async (params: GetMentorListParams): Promise<GetMentorListResponse> => {
+	await delay(500);
 	try {
-		const url = getMentorListURLGenerator(params);
-		const {data} = await axiosInstance.get(url);
+		const data = db.mentors;
+
+        // Transform Mentor to Content (flattened structure expected by GetMentorListResponse)
+        // The type definition expects `mentoringId`, `mentoringTitle` etc. in the list item
+        // which implies the list view might show mentors *with* a representative mentoring, or just flattened fields?
+        // Let's assume we take the first mentoring from the list
+        const content = data.map(m => {
+            const firstMentoring = m.mentoringDtoList && m.mentoringDtoList.length > 0 ? m.mentoringDtoList[0] : null;
+            return {
+                mentorId: m.mentorId,
+                mentorName: m.mentorName,
+                career: m.career,
+                field: m.field,
+                task: m.task,
+                email: m.email,
+                phone: m.phone,
+                aboutMe: m.aboutMe,
+                github: m.github,
+                mentoringId: firstMentoring?.id || 0,
+                mentoringTitle: firstMentoring?.title || '',
+                mentoringContent: firstMentoring?.content || '',
+                mentoringPay: firstMentoring?.pay || '',
+                mentoringPeriod: firstMentoring?.period || '',
+                mentoringParticipants: firstMentoring?.participants || 0,
+                mentoringCategory: firstMentoring?.category || ''
+            };
+        });
 		
 		// Mock: JSON Server 응답을 백엔드 API 형태로 변환
 		const mockResponse: GetMentorListResponse = {
-			content: data || [],
+			content: content,
 			pageable: {
 				pageNumber: params.offset,
 				pageSize: params.size,
