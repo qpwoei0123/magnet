@@ -19,18 +19,17 @@ const PaymentModal = ({ mentoringData: propsMentoringData }: PaymentModalProps =
 	const location = useLocation();
 	const {setMentoringData, mentoringData} = MentoringStore();
 
-	// 로딩 메시지 목록
-	const loadingMessages = [
-		'멘토링 정보를 불러오는 중...',
-		'멘토 프로필을 확인하는 중...',
-		'최적의 멘토링을 준비하는 중...',
-		'커리큘럼을 분석하는 중...',
-		'맞춤형 멘토링을 설정하는 중...',
-		'멘토와의 매칭을 확인하는 중...'
-	];
-
 	// props로 전달된 데이터를 랜덤 로딩 시간 후 설정
 	useEffect(() => {
+		// 로딩 메시지 목록
+		const loadingMessages = [
+			'멘토링 정보를 불러오는 중...',
+			'멘토 프로필을 확인하는 중...',
+			'최적의 멘토링을 준비하는 중...',
+			'커리큘럼을 분석하는 중...',
+			'맞춤형 멘토링을 설정하는 중...',
+			'멘토와의 매칭을 확인하는 중...'
+		];
 		if (propsMentoringData && !mentoringData) {
 			const transformedData = {
 				mentoringId: propsMentoringData.mentoringId,
