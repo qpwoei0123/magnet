@@ -1,88 +1,98 @@
-import {axiosInstanceWithAuth} from './axiosInstance';
-import {MemberStore} from '../store/MemberStore';
-import {UpdateMemberParams, GetMemberResponse} from '../types/api';
-import {getCurrentUser, updateUser, getAllUsers} from '../utils/auth/localStorageAuth';
+import { MemberStore } from '../store/MemberStore';
+import { UpdateMemberParams, GetMemberResponse } from '../types/api';
+import db from '../db.json';
+
+// Helper to delay response for realistic feel
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const getMember = async (): Promise<GetMemberResponse> => {
-	try {
-		// localStorage에서 현재 사용자 정보 가져오기
-		const currentUser = getCurrentUser();
-		if (!currentUser) {
-			throw new Error('로그인이 필요합니다.');
-		}
+	await delay(300);
 
-		// GetMemberResponse 형태로 변환
-		const memberData: GetMemberResponse = {
-			id: parseInt(currentUser.id) || 0,
-			email: currentUser.email,
-			nickName: currentUser.nickname,
-			username: currentUser.username || '',
-			phone: currentUser.phone || '',
-			city: currentUser.addressDto?.city || '',
-			street: currentUser.addressDto?.street || '',
-			picture: null,
-			memberStatus: 'ACTIVE',
-			roles: ['USER'],
-			menteeList: null,
-			mentorList: null
-		};
-
-		// 글로버 스토어에 저장
-		const setGlobalMember = MemberStore.getState().setGlobalMember;
-		setGlobalMember(memberData);
-		
-		return memberData;
-	} catch (error) {
-		console.error('멤버 불러오기 실패', error);
-		throw error;
+	const memberId = sessionStorage.getItem('memberId');
+	if (!memberId) {
+		throw new Error('User is not logged in.');
 	}
+
+	const member = db.members.find(m => m.id === parseInt(memberId, 10));
+	if (!member) {
+		throw new Error('Member not found');
+	}
+
+	// Transform db data to GetMemberResponse type
+	const memberData: GetMemberResponse = {
+		id: member.id,
+		email: member.email,
+		nickName: member.nickname,
+		username: member.nickname, // Assuming username is same as nickname
+		phone: '010-0000-0000', // Mock data
+		city: '서울특별시', // Mock data
+		street: '강남구', // Mock data
+		picture: null,
+		memberStatus: 'ACTIVE',
+		roles: ['USER'],
+		menteeList: null,
+		mentorList: null,
+	};
+
+	// Save to global store
+	const setGlobalMember = MemberStore.getState().setGlobalMember;
+	setGlobalMember(memberData);
+
+	return memberData;
 };
 
 export const deleteMember = async () => {
-	try {
-		// localStorage에서 현재 사용자 삭제
-		const currentUser = getCurrentUser();
-		if (!currentUser) {
-			throw new Error('로그인이 필요합니다.');
-		}
-
-		// 사용자 목록에서 제거
-		const users = getAllUsers();
-		const filteredUsers = users.filter(user => user.id !== currentUser.id);
-		localStorage.setItem('magnet_users', JSON.stringify(filteredUsers));
-		
-		// 현재 사용자 정보 삭제
-		localStorage.removeItem('magnet_current_user');
-		sessionStorage.clear();
-		
-		console.log('회원 탈퇴 완료');
-	} catch (error) {
-		console.error('멤버 삭제 실패', error);
+	await delay(500);
+	const memberId = sessionStorage.getItem('memberId');
+	if (!memberId) {
+		throw new Error('User is not logged in.');
 	}
+
+	// Note: This won't persist. It just simulates the deletion.
+	const userIndex = db.members.findIndex(m => m.id === parseInt(memberId, 10));
+	if (userIndex > -1) {
+		db.members.splice(userIndex, 1);
+		console.log(`Mock: Deleted member with id ${memberId}`);
+	}
+
+	sessionStorage.clear();
 };
 
 export const updateMember = async (params: UpdateMemberParams) => {
-	try {
-		// localStorage에서 현재 사용자 업데이트
-		const currentUser = getCurrentUser();
-		if (!currentUser) {
-			throw new Error('로그인이 필요합니다.');
-		}
-
-		// 사용자 정보 업데이트
-		const updateResult = updateUser(currentUser.id, {
-			nickname: params.nickName,
-			phone: params.phone,
-			addressDto: params.addressDto
-		});
-
-		if (!updateResult.success) {
-			throw new Error(updateResult.message);
-		}
-		
-		console.log('사용자 정보 업데이트 성공:', updateResult.user);
-	} catch (error) {
-		console.error('멤버 업데이트 실패', error);
-		throw error;
+	await delay(500);
+	const memberId = sessionStorage.getItem('memberId');
+	if (!memberId) {
+		throw new Error('User is not logged in.');
 	}
+
+	const member = db.members.find(m => m.id === parseInt(memberId, 10));
+	if (!member) {
+		throw new Error('Member not found');
+	}
+
+	// Update the in-memory user data
+	member.nickname = params.nickName || member.nickname;
+	// In a real scenario, you'd update other fields too.
+	// For this mock, we just update the nickname.
+
+	console.log('Mock: Updated member:', member);
+
+	// Also update the global store for immediate UI feedback
+	const updatedMemberData: GetMemberResponse = {
+		id: member.id,
+		email: member.email,
+		nickName: member.nickname,
+		username: member.nickname,
+		phone: params.phone || '010-0000-0000',
+		city: params.addressDto?.city || '서울특별시',
+		street: params.addressDto?.street || '강남구',
+		picture: null,
+		memberStatus: 'ACTIVE',
+		roles: ['USER'],
+		menteeList: null,
+		mentorList: null,
+	};
+
+	const setGlobalMember = MemberStore.getState().setGlobalMember;
+	setGlobalMember(updatedMemberData);
 };

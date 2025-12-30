@@ -1,44 +1,37 @@
-// import axios from 'axios';
-// import {loadTossPayments} from '@tosspayments/payment-sdk';
+import db from '../db.json';
 
-// const clientKey = process.env.REACT_APP_TOSS_CLIENT_KEY || 'NO_CLIENT_KEY';
-// const baseUrl = process.env.REACT_APP_BASE_URL || 'NO_BASE_URL';
-// const appUrl = process.env.REACT_APP_URL || 'NO_APP_URL';
 // Use window.location.origin to support any deployment URL (S3, Vercel, Localhost)
 const appUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
 
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export const openTossPayment = async () => {
-	try {
-		// Mock: 실제 결제 대신 시뮬레이션
-		const amount = Number(sessionStorage.getItem('amount'));
-		const mentoringId = sessionStorage.getItem('mentoringId');
-		
-		console.log('모킹 환경: 결제 시뮬레이션 시작');
-		console.log('Amount:', amount, 'MentoringId:', mentoringId);
-		
-		// 모킹 결제 데이터 생성
-		const mockOrderId = `mock_order_${Date.now()}`;
-		const mockPaymentKey = `mock_payment_${Date.now()}`;
-		
-		// 세션에 모킹 결제 데이터 저장
-		sessionStorage.setItem('mockOrderId', mockOrderId);
-		sessionStorage.setItem('mockPaymentKey', mockPaymentKey);
-		
-		// 2초 후 성공 페이지로 이동 (실제 결제 시뮬레이션)
-		setTimeout(() => {
-			const mockParams = new URLSearchParams({
-				paymentKey: mockPaymentKey,
-				orderId: mockOrderId,
-				amount: amount.toString()
-			});
-			window.location.href = `${appUrl}/paymentcompleted?${mockParams.toString()}`;
-		}, 2000);
-		
-		alert('모킹 환경: 2초 후 결제가 완료됩니다.');
-		
-	} catch (error) {
-		console.error('모킹 결제 시뮬레이션 실패', error);
+	const amount = sessionStorage.getItem('amount');
+	const mentoringId = sessionStorage.getItem('mentoringId');
+
+	if (!amount || !mentoringId) {
+		alert('결제 정보(금액 또는 멘토링 ID)가 없습니다. 다시 시도해 주세요.');
+		return;
 	}
+
+	console.log('Mock Payment Simulation Started');
+	console.log('Amount:', amount, 'MentoringId:', mentoringId);
+
+	// Mock payment data generation
+	const mockOrderId = `mock_order_${Date.now()}`;
+	const mockPaymentKey = `mock_payment_${Date.now()}`;
+
+	// Simulate a delay for the payment process
+	await delay(2000);
+
+	const mockParams = new URLSearchParams({
+		paymentKey: mockPaymentKey,
+		orderId: mockOrderId,
+		amount: amount.toString(),
+	});
+
+	// Redirect to the payment completion page
+	window.location.href = `${appUrl}/paymentcompleted?${mockParams.toString()}`;
 };
 
 type PaymentData = {
@@ -48,38 +41,37 @@ type PaymentData = {
 };
 
 export const sendPaymentSuccessToServer = async (paymentData: PaymentData) => {
-	try {
-		// Mock: 결제 성공 정보를 모킹 서버에 저장
-		console.log('모킹 환경: 결제 성공 정보 서버 전송 시뮬레이션');
-		
-		const memberId = sessionStorage.getItem('memberId') || '1';
-		const mentoringId = sessionStorage.getItem('mentoringId') || '1';
-		
-		const mockPaymentRecord = {
-			memberId: parseInt(memberId),
-			mentoringId: parseInt(mentoringId),
-			amount: parseInt(paymentData.amount),
-			paymentKey: paymentData.paymentKey,
-			orderId: paymentData.orderId,
-			status: 'completed',
-			createdAt: new Date().toISOString()
-		};
-		
-		// Mock API에 결제 정보 저장
-		// const response = await axios.post(`${baseUrl}/payments`, mockPaymentRecord);
-		console.log('모킹 서버에 결제 완료 정보 전송 성공 (Simulated)', mockPaymentRecord);
-		
-		return {
-			success: true,
-			message: '결제가 성공적으로 처리되었습니다.',
-			data: mockPaymentRecord
-		};
-	} catch (error) {
-		console.error('모킹 결제 정보 전송 실패', error);
+	await delay(500);
+	console.log('Mock: Simulating sending payment success to server...');
+
+	const memberId = sessionStorage.getItem('memberId');
+	const mentoringId = sessionStorage.getItem('mentoringId');
+
+	if (!memberId || !mentoringId) {
+		console.error('Mock Error: Missing memberId or mentoringId in session storage.');
 		return {
 			success: false,
-			message: '결제 정보 전송에 실패했습니다.',
-			error: error
+			message: '사용자 또는 멘토링 정보가 없습니다.',
 		};
 	}
+
+	const newPaymentRecord = {
+		id: db.payments.length + 1,
+		memberId: parseInt(memberId, 10),
+		mentoringId: parseInt(mentoringId, 10),
+		amount: parseInt(paymentData.amount, 10),
+		paymentKey: paymentData.paymentKey,
+		orderId: paymentData.orderId,
+		status: 'completed',
+	};
+
+	// Note: This only logs the action. It doesn't persist the data.
+	db.payments.push(newPaymentRecord);
+	console.log('Mock: Payment record added to in-memory db.json', newPaymentRecord);
+
+	return {
+		success: true,
+		message: '결제가 성공적으로 처리되었습니다.',
+		data: newPaymentRecord,
+	};
 };
