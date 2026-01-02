@@ -13,9 +13,22 @@ export const getMember = async (): Promise<GetMemberResponse> => {
 		throw new Error('User is not logged in.');
 	}
 
-	const member = db.members.find(m => m.id === parseInt(memberId, 10));
+	const parsedMemberId = parseInt(memberId, 10);
+	const member = db.members.find(m => m.id === parsedMemberId);
 	if (!member) {
 		throw new Error('Member not found');
+	}
+
+	// Dynamically find mentor and mentee data associated with the member
+	const mentorProfile = db.mentors.find(m => m.memberId === parsedMemberId);
+	const menteeEnrollments = db.mentees.filter(m => m.memberId === parsedMemberId);
+
+	const roles = ['USER'];
+	if (mentorProfile) {
+		roles.push('MENTOR');
+	}
+	if (menteeEnrollments.length > 0) {
+		roles.push('MENTEE');
 	}
 
 	// Transform db data to GetMemberResponse type
@@ -23,15 +36,19 @@ export const getMember = async (): Promise<GetMemberResponse> => {
 		id: member.id,
 		email: member.email,
 		nickName: member.nickname,
-		username: member.nickname, // Assuming username is same as nickname
-		phone: '010-0000-0000', // Mock data
+		username: member.nickname,
+		phone: '010-0000-0000', // Mock data, can be sourced from mentor/mentee if available
 		city: '서울특별시', // Mock data
 		street: '강남구', // Mock data
 		picture: null,
 		memberStatus: 'ACTIVE',
-		roles: ['USER'],
-		menteeList: null,
-		mentorList: null,
+		roles: roles,
+		// If the user is a mentor, attach their full mentor profile.
+		// The original type might expect a list, but a single profile makes more sense here.
+		// For now, wrapping it in an array to match a potential list type.
+		mentorList: mentorProfile ? ([mentorProfile] as any) : [],
+		// Attach all mentee enrollments for this user.
+		menteeList: menteeEnrollments as any,
 	};
 
 	// Save to global store
