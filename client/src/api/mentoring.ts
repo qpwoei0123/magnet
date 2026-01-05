@@ -71,30 +71,26 @@ export const getMentoringList = async (
 	});
 
 	const totalElements = allData.length;
-	const totalPages = Math.ceil(totalElements / params.size);
-	const startIndex = params.offset * params.size;
-	const endIndex = startIndex + params.size;
-	const pageData = allData.slice(startIndex, endIndex);
 
 	const mockResponse: GetMentoringListResponse = {
-		content: pageData,
+		content: allData, // Return all data
 		pageable: {
-			pageNumber: params.offset,
-			pageSize: params.size,
+			pageNumber: 0,
+			pageSize: totalElements,
 			sort: { empty: true, sorted: false, unsorted: true },
-			offset: startIndex,
-			unpaged: false,
-			paged: true
+			offset: 0,
+			unpaged: true,
+			paged: false
 		},
-		last: params.offset >= totalPages - 1,
-		totalPages: totalPages,
+		last: true,
+		totalPages: 1,
 		totalElements: totalElements,
-		size: params.size,
-		number: params.offset,
+		size: totalElements,
+		number: 0,
 		sort: { empty: true, sorted: false, unsorted: true },
-		first: params.offset === 0,
-		numberOfElements: pageData.length,
-		empty: pageData.length === 0
+		first: true,
+		numberOfElements: totalElements,
+		empty: totalElements === 0
 	};
 
 	return mockResponse;
