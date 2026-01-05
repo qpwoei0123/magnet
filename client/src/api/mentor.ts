@@ -28,19 +28,15 @@ export const createMentor = async (params: CreateMentorParams) => {
 export const getMentor = async (): Promise<Mentor> => {
 	await delay(300);
 	const memberId = sessionStorage.getItem('memberId');
-
-	// Try to find a mentor profile linked to the current user
-	// Note: db.json doesn't link mentors to members, so we'll simulate it.
-	// For this demo, let's just return a specific mentor, e.g., the first one.
-	let mentor = db.mentors.find(m => m.mentorId === (memberId ? parseInt(memberId, 10) : -1));
-
-	if (!mentor) {
-		// If no mentor is associated, return the first as a default for demo purposes.
-		mentor = db.mentors[0];
+	if (!memberId) {
+		throw new Error('User is not logged in.');
 	}
 
+	const parsedMemberId = parseInt(memberId, 10);
+	const mentor = db.mentors.find(m => m.memberId === parsedMemberId);
+
 	if (!mentor) {
-		throw new Error('No mentors found in the database.');
+		throw new Error('Mentor profile not found for the current user.');
 	}
 
 	// The 'Mentor' type from '../types/index.ts' includes `mentoringDtoList`

@@ -12,6 +12,7 @@
   "mentors": [
     {
       "mentorId": 1,
+      "memberId": 1,
       "mentorName": "김개발",
       "career": "시니어",
       "field": "백엔드",
@@ -43,6 +44,7 @@
     },
     {
       "mentorId": 2,
+      "memberId": 2,
       "mentorName": "이프론트",
       "career": "미들",
       "field": "프론트엔드",
@@ -65,6 +67,7 @@
     },
     {
       "mentorId": 3,
+      "memberId": 3,
       "mentorName": "박풀스택",
       "career": "시니어",
       "field": "풀스택",

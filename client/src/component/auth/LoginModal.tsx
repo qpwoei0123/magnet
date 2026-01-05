@@ -22,6 +22,7 @@ export const LoginModal = () => {
 			await getMember();
 			closeModal();
 			openToast({message: '데모 계정으로 로그인 성공!', type: 'success'});
+			navigate('/mentorlist');
 		} catch (e) {
 			openToast({
 				message: '로그인에 실패했습니다.',
