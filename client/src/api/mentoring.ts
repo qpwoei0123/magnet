@@ -5,7 +5,7 @@ import {
 	GetMentoringListResponse,
 	Content,
 } from '../types/api/mentoring';
-import db from '../db.json';
+import { mockData } from './mockData';
 
 // Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -21,13 +21,13 @@ export const createMentoring = async (params: CreateMentoringParams) => {
 export const getMentoring = async (mentoringId: number): Promise<GetMentoringResponse> => {
 	await delay(300);
 
-	const mentoring = db.mentorings.find(m => m.mentoringId === mentoringId);
+	const mentoring = mockData.mentorings.find(m => m.mentoringId === mentoringId);
 	if (!mentoring) {
 		throw new Error('Mentoring not found');
 	}
 
 	// Join with Mentor data to get missing fields
-	const mentor = db.mentors.find(m => m.mentorId === mentoring.mentorId);
+	const mentor = mockData.mentors.find(m => m.mentorId === mentoring.mentorId);
 
 	// Construct the full response merging mentoring and mentor data
 	const result: GetMentoringResponse = {
@@ -58,8 +58,8 @@ export const getMentoringList = async (
 
 	// Join all mentorings with their mentor names for the list view
 	// The `Content` type in `GetMentoringListResponse` needs `mentorName`
-	const allData: Content[] = db.mentorings.map(mentoring => {
-		const mentor = db.mentors.find(m => m.mentorId === mentoring.mentorId);
+	const allData: Content[] = mockData.mentorings.map(mentoring => {
+		const mentor = mockData.mentors.find(m => m.mentorId === mentoring.mentorId);
 		return {
 			...mentoring,
 			mentorName: mentor?.mentorName || mentoring.mentorName || 'Unknown',
