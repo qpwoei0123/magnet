@@ -1,4 +1,4 @@
-import db from '../db.json';
+import { mockData } from './mockData';
 
 // Use window.location.origin to support any deployment URL (S3, Vercel, Localhost)
 const appUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
@@ -56,7 +56,7 @@ export const sendPaymentSuccessToServer = async (paymentData: PaymentData) => {
 	}
 
 	const newPaymentRecord = {
-		id: db.payments.length + 1,
+		id: mockData.payments.length + 1,
 		memberId: parseInt(memberId, 10),
 		mentoringId: parseInt(mentoringId, 10),
 		amount: parseInt(paymentData.amount, 10),
@@ -66,7 +66,7 @@ export const sendPaymentSuccessToServer = async (paymentData: PaymentData) => {
 	};
 
 	// Note: This only logs the action. It doesn't persist the data.
-	db.payments.push(newPaymentRecord);
+	mockData.payments.push(newPaymentRecord);
 	console.log('Mock: Payment record added to in-memory db.json', newPaymentRecord);
 
 	return {
