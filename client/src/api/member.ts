@@ -1,6 +1,6 @@
 import { MemberStore } from '../store/MemberStore';
 import { UpdateMemberParams, GetMemberResponse } from '../types/api';
-import db from '../db.json';
+import { mockData } from './mockData';
 
 // Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -14,14 +14,14 @@ export const getMember = async (): Promise<GetMemberResponse> => {
 	}
 
 	const parsedMemberId = parseInt(memberId, 10);
-	const member = db.members.find(m => m.id === parsedMemberId);
+	const member = mockData.members.find(m => m.id === parsedMemberId);
 	if (!member) {
 		throw new Error('Member not found');
 	}
 
 	// Dynamically find mentor and mentee data associated with the member
-	const mentorProfile = db.mentors.find(m => m.memberId === parsedMemberId);
-	const menteeEnrollments = db.mentees.filter(m => m.memberId === parsedMemberId);
+	const mentorProfile = mockData.mentors.find(m => m.memberId === parsedMemberId);
+	const menteeEnrollments = mockData.mentees.filter(m => m.memberId === parsedMemberId);
 
 	const roles = ['USER'];
 	if (mentorProfile) {
@@ -66,9 +66,9 @@ export const deleteMember = async () => {
 	}
 
 	// Note: This won't persist. It just simulates the deletion.
-	const userIndex = db.members.findIndex(m => m.id === parseInt(memberId, 10));
+	const userIndex = mockData.members.findIndex(m => m.id === parseInt(memberId, 10));
 	if (userIndex > -1) {
-		db.members.splice(userIndex, 1);
+		mockData.members.splice(userIndex, 1);
 		console.log(`Mock: Deleted member with id ${memberId}`);
 	}
 
@@ -82,7 +82,7 @@ export const updateMember = async (params: UpdateMemberParams) => {
 		throw new Error('User is not logged in.');
 	}
 
-	const member = db.members.find(m => m.id === parseInt(memberId, 10));
+	const member = mockData.members.find(m => m.id === parseInt(memberId, 10));
 	if (!member) {
 		throw new Error('Member not found');
 	}

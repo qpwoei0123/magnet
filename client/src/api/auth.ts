@@ -1,5 +1,5 @@
 import { SignupParams, LoginParams } from '../types/api';
-import db from '../db.json';
+import { mockData } from './mockData';
 
 // Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -7,14 +7,14 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 export const signup = async (data: SignupParams) => {
 	await delay(500);
 
-	const existingUser = db.members.find(user => user.email === data.email);
+	const existingUser = mockData.members.find(user => user.email === data.email);
 
 	if (existingUser) {
 		throw new Error('User with this email already exists.');
 	}
 
 	const newUser = {
-		id: db.members.length + 1,
+		id: mockData.members.length + 1,
 		email: data.email,
 		password: data.password, // In a real app, hash this!
 		nickname: data.nickName || data.email.split('@')[0],
@@ -22,8 +22,8 @@ export const signup = async (data: SignupParams) => {
 		createdAt: new Date().toISOString(),
 	};
 
-	// Note: This only adds to the in-memory db.json, it won't persist.
-	db.members.push(newUser);
+	// Note: This only adds to the in-memory mockData, it won't persist.
+	mockData.members.push(newUser as any);
 
 	console.log('Mock Signup Success:', newUser);
 
@@ -35,7 +35,7 @@ export const signup = async (data: SignupParams) => {
 
 export const login = async (body: LoginParams) => {
 	await delay(500);
-	const user = db.members.find(u => u.email === body.email && u.password === body.password);
+	const user = mockData.members.find(u => u.email === body.email && u.password === body.password);
 
 	if (user) {
 		// Simulate token-based auth by setting sessionStorage

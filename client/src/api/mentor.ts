@@ -1,6 +1,6 @@
 import { Mentor } from '../types';
 import { CreateMentorParams, GetMentorListResponse, GetMentorListParams } from '../types/api';
-import db from '../db.json';
+import { mockData } from './mockData';
 
 // Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -13,14 +13,14 @@ export const createMentor = async (params: CreateMentorParams) => {
 	}
 
 	const newMentor = {
-		mentorId: db.mentors.length + 1,
+		mentorId: mockData.mentors.length + 1,
 		memberId: parseInt(memberId, 10),
 		...params,
 		mentoringDtoList: [], // Start with no mentoring sessions
 	};
 
 	// Note: This won't persist.
-	db.mentors.push(newMentor as any);
+	mockData.mentors.push(newMentor as any);
 	console.log('Mock Create Mentor:', newMentor);
 	return;
 };
@@ -33,7 +33,7 @@ export const getMentor = async (): Promise<Mentor> => {
 	}
 
 	const parsedMemberId = parseInt(memberId, 10);
-	const mentor = db.mentors.find(m => m.memberId === parsedMemberId);
+	const mentor = mockData.mentors.find(m => m.memberId === parsedMemberId);
 
 	if (!mentor) {
 		throw new Error('Mentor profile not found for the current user.');
@@ -48,7 +48,7 @@ export const getMentorList = async (
 ): Promise<GetMentorListResponse> => {
 	await delay(500);
 	const { offset, size } = params;
-	const allMentors = db.mentors;
+	const allMentors = mockData.mentors;
 
 	// Flatten the mentor data with their first mentoring session for the list view
 	const content = allMentors.map(m => {
