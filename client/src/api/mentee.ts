@@ -1,6 +1,6 @@
 import { CreateMenteeParams } from '../types/api';
 import { MenteeData } from '../types/mentee';
-import db from '../db.json';
+import { mockData } from './mockData';
 
 // Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -13,18 +13,18 @@ export const createMentee = async (params: CreateMenteeParams) => {
 	}
 
 	const newMentee = {
-		menteeId: db.mentees.length + 1,
+		menteeId: mockData.mentees.length + 1,
 		memberId: parseInt(memberId, 10),
 		mentoringId: params.mentoringId,
 		message: params.message,
 		schedule: params.schedule,
 		paymentKey: `test_payment_key_${Date.now()}`,
 		// Add other details from the mentoring session for context
-		...db.mentorings.find(m => m.mentoringId === params.mentoringId),
+		...mockData.mentorings.find(m => m.mentoringId === params.mentoringId),
 	};
 
 	// Note: This won't persist.
-	db.mentees.push(newMentee as any);
+	mockData.mentees.push(newMentee as any);
 
 	console.log('Mock Create Mentee:', newMentee);
 
@@ -34,11 +34,11 @@ export const createMentee = async (params: CreateMenteeParams) => {
 export const getMenteeList = async (mentoringId: number): Promise<MenteeData[]> => {
 	await delay(300);
 
-	const mentees = db.mentees.filter(mentee => mentee.mentoringId === mentoringId);
+	const mentees = mockData.mentees.filter(mentee => mentee.mentoringId === mentoringId);
 
 	// Join with member data to get mentee name (nickname) and other details
 	const populatedMentees = mentees.map(mentee => {
-		const member = db.members.find(m => m.id === mentee.memberId);
+		const member = mockData.members.find(m => m.id === mentee.memberId);
 		return {
 			...mentee,
 			menteeNickName: member?.nickname || `User ${mentee.memberId}`,
