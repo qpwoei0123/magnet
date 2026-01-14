@@ -1,6 +1,6 @@
 import { CreateMenteeParams } from '../types/api';
 import { MenteeData } from '../types/mentee';
-import db from '../db.json';
+import db from './mockData';
 
 // Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
