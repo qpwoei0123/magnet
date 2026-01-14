@@ -1,4 +1,4 @@
-{
+const db = {
   "members": [
     {
       "id": 1,
@@ -407,4 +407,6 @@
       "status": "completed"
     }
   ]
-}
+};
+
+export default db;
