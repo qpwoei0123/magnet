@@ -1,4 +1,4 @@
-{
+export const db = {
   "members": [
     {
       "id": 1,
@@ -407,4 +407,4 @@
       "status": "completed"
     }
   ]
-}
+};
