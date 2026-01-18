@@ -1,3 +1,9 @@
+
+node_modules/
+npm_output.log
+.DS_Store
+client/node_modules
+client/build
 HELP.md
 .gradle
 build/
@@ -38,4 +44,3 @@ out/
 
 # Ignore application.yml file
 src/main/resources/application.yml
-
