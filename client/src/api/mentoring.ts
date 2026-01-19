@@ -1,20 +1,15 @@
 import {
 	CreateMentoringParams,
 	GetMentoringResponse,
-	GetMentoringListParams,
 	GetMentoringListResponse,
 	Content,
 } from '../types/api/mentoring';
-import db from '../db.json';
+import { db } from './mockData';
 
-// Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const createMentoring = async (params: CreateMentoringParams) => {
 	await delay(500);
-	console.log('Mock Create Mentoring:', params);
-	// In a real static demo, we can't persist this permanently,
-	// but we could theoretically update a local state or just return success.
 	return;
 };
 
@@ -26,71 +21,93 @@ export const getMentoring = async (mentoringId: number): Promise<GetMentoringRes
 		throw new Error('Mentoring not found');
 	}
 
-	// Join with Mentor data to get missing fields
 	const mentor = db.mentors.find(m => m.mentorId === mentoring.mentorId);
 
-	// Construct the full response merging mentoring and mentor data
 	const result: GetMentoringResponse = {
-		...mentoring,
-		// Ensure fields from mentor are present if missing in mentoring
-		career: mentoring.career || mentor?.career || '시니어',
-		field: mentoring.field || mentor?.field || mentoring.category,
-		task: mentoring.task || mentor?.task || '',
+		...(mentoring as any),
+		career: (mentor?.career || 0).toString(),
+		field: (mentor?.field || []).join(', '),
+		task: (mentor?.task || []).join(', '),
 		email: mentor?.email || 'demo@example.com',
 		phone: mentor?.phone || '010-0000-0000',
-		aboutMe: mentoring.aboutMe || mentor?.aboutMe || '자기소개가 없습니다.',
-		github: mentor?.github || '',
-		mentorName: mentor?.mentorName || mentoring.mentorName || '알 수 없음',
+		aboutMe: '자기소개가 없습니다.',
+		github: '',
+		mentorName: mentor?.nickname || '알 수 없음',
+		pay: mentoring.amount.toString(),
+		period: '3개월',
+		participants: mentoring.numberOfPeople,
 	};
 
-	// Side effects from original code
 	sessionStorage.setItem('mentoringId', result.mentoringId.toString());
-	sessionStorage.setItem('schedule', result.period);
-	sessionStorage.setItem('amount', result.pay);
+	sessionStorage.setItem('amount', result.pay.toString());
 
 	return result;
 };
 
-export const getMentoringList = async (
-	params: GetMentoringListParams,
-): Promise<GetMentoringListResponse> => {
-	await delay(500);
+export const getMentoringList = async (params: any): Promise<GetMentoringListResponse> => {
+	await delay(300);
+	const { size = 10 } = params;
 
-	// Join all mentorings with their mentor names for the list view
-	// The `Content` type in `GetMentoringListResponse` needs `mentorName`
-	const allData: Content[] = db.mentorings.map(mentoring => {
+	let filteredMentorings = db.mentorings.filter(mentoring => {
+		if (params.category && params.category !== 'ALL' && mentoring.category !== params.category) {
+			return false;
+		}
+		if (params.keyword) {
+			const keyword = params.keyword.toLowerCase();
+			const inTitle = mentoring.title.toLowerCase().includes(keyword);
+			const inContent = mentoring.content.toLowerCase().includes(keyword);
+			if (!inTitle && !inContent) {
+				return false;
+			}
+		}
+		return true;
+	});
+
+	const content: Content[] = filteredMentorings.map(mentoring => {
 		const mentor = db.mentors.find(m => m.mentorId === mentoring.mentorId);
 		return {
-			...mentoring,
-			mentorName: mentor?.mentorName || mentoring.mentorName || 'Unknown',
-			aboutMe: mentoring.aboutMe || mentor?.aboutMe || '',
-			field: mentoring.field || mentor?.field || '',
-			task: mentoring.task || mentor?.task || '',
-			career: mentoring.career || mentor?.career || '',
+			mentoringId: mentoring.mentoringId,
+			title: mentoring.title,
+			content: mentoring.content,
+			pay: mentoring.amount.toString(),
+			period: '3개월', // Mock data
+			participants: mentoring.numberOfPeople,
+			category: mentoring.category,
+			mentorId: mentoring.mentorId,
+			aboutMe: '자기소개가 없습니다.', // Mock data
+			field: (mentor?.field || []).join(', '),
+			task: (mentor?.task || []).join(', '),
+			mentorName: mentor?.nickname || 'Unknown Mentor',
+			career: (mentor?.career || 0).toString(),
 		};
 	});
 
-	const totalElements = allData.length;
+	const offset = (params.page || 1) - 1;
+	const totalElements = content.length;
+	const totalPages = Math.ceil(totalElements / size);
+	const startIndex = offset * size;
+	const endIndex = startIndex + size;
+	const pageData = content.slice(startIndex, endIndex);
 
 	const mockResponse: GetMentoringListResponse = {
-		content: allData, // Return all data
+		content: pageData,
 		pageable: {
-			pageNumber: 0,
-			pageSize: totalElements,
+			pageNumber: offset,
+			pageSize: size,
 			sort: { empty: true, sorted: false, unsorted: true },
-			offset: 0,
-			unpaged: true,
-			paged: false
+			offset: startIndex,
+			unpaged: false,
+			paged: true,
 		},
-		last: true,
-		totalPages: 1,
+		last: offset >= totalPages - 1,
+		totalPages: totalPages,
 		totalElements: totalElements,
-		size: totalElements,
-		number: 0,
+		size: size,
+		number: offset,
 		sort: { empty: true, sorted: false, unsorted: true },
-		first: true,
-		numberOfElements: totalElements,
-		empty: totalElements === 0
+		first: offset === 0,
+		numberOfElements: pageData.length,
+		empty: pageData.length === 0,
 	};
 
 	return mockResponse;

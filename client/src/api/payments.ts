@@ -1,6 +1,5 @@
-import db from '../db.json';
+import { db } from './mockData';
 
-// Use window.location.origin to support any deployment URL (S3, Vercel, Localhost)
 const appUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -14,15 +13,10 @@ export const openTossPayment = async () => {
 		return;
 	}
 
-	console.log('Mock Payment Simulation Started');
-	console.log('Amount:', amount, 'MentoringId:', mentoringId);
-
-	// Mock payment data generation
 	const mockOrderId = `mock_order_${Date.now()}`;
 	const mockPaymentKey = `mock_payment_${Date.now()}`;
 
-	// Simulate a delay for the payment process
-	await delay(2000);
+	await delay(1500);
 
 	const mockParams = new URLSearchParams({
 		paymentKey: mockPaymentKey,
@@ -30,7 +24,6 @@ export const openTossPayment = async () => {
 		amount: amount.toString(),
 	});
 
-	// Redirect to the payment completion page
 	window.location.href = `${appUrl}/paymentcompleted?${mockParams.toString()}`;
 };
 
@@ -42,13 +35,11 @@ type PaymentData = {
 
 export const sendPaymentSuccessToServer = async (paymentData: PaymentData) => {
 	await delay(500);
-	console.log('Mock: Simulating sending payment success to server...');
 
 	const memberId = sessionStorage.getItem('memberId');
 	const mentoringId = sessionStorage.getItem('mentoringId');
 
 	if (!memberId || !mentoringId) {
-		console.error('Mock Error: Missing memberId or mentoringId in session storage.');
 		return {
 			success: false,
 			message: '사용자 또는 멘토링 정보가 없습니다.',
@@ -65,9 +56,7 @@ export const sendPaymentSuccessToServer = async (paymentData: PaymentData) => {
 		status: 'completed',
 	};
 
-	// Note: This only logs the action. It doesn't persist the data.
-	db.payments.push(newPaymentRecord);
-	console.log('Mock: Payment record added to in-memory db.json', newPaymentRecord);
+	db.payments.push(newPaymentRecord as never);
 
 	return {
 		success: true,

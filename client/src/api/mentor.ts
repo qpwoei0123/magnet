@@ -1,8 +1,7 @@
 import { Mentor } from '../types';
 import { CreateMentorParams, GetMentorListResponse, GetMentorListParams } from '../types/api';
-import db from '../db.json';
+import { db } from './mockData';
 
-// Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const createMentor = async (params: CreateMentorParams) => {
@@ -47,39 +46,43 @@ export const getMentorList = async (
 	params: GetMentorListParams,
 ): Promise<GetMentorListResponse> => {
 	await delay(500);
-	const { offset, size } = params;
+
 	const allMentors = db.mentors;
 
-	// Flatten the mentor data with their first mentoring session for the list view
 	const content = allMentors.map(m => {
-		const firstMentoring =
-			m.mentoringDtoList && m.mentoringDtoList.length > 0 ? m.mentoringDtoList[0] : null;
+		const mentoring = db.mentorings.find(mentoring => mentoring.mentorId === m.mentorId);
 		return {
 			mentorId: m.mentorId,
-			mentorName: m.mentorName,
-			career: m.career,
-			field: m.field,
-			task: m.task,
+			mentorName: m.nickname,
+			aboutMe: '자기소개입니다.',
+			company: mentoring?.company || '',
+			career: (mentoring?.career || 0).toString(),
+			field: (mentoring?.field || []).join(', '),
+			task: (mentoring?.task || []).join(', '),
+			pay: mentoring?.amount || 0,
+			period: '3개월',
+			mentoringCount: 1,
+			menteeCount: 1,
 			email: m.email,
 			phone: m.phone,
-			aboutMe: m.aboutMe,
-			github: m.github,
-			// Flattened mentoring fields for the list card
-			mentoringId: firstMentoring?.id || 0,
-			mentoringTitle: firstMentoring?.title || '멘토링 없음',
-			mentoringContent: firstMentoring?.content || '',
-			mentoringPay: firstMentoring?.pay || '',
-			mentoringPeriod: firstMentoring?.period || '',
-			mentoringParticipants: firstMentoring?.participants || 0,
-			mentoringCategory: firstMentoring?.category || '',
+			github: '',
+			mentoringId: mentoring?.mentoringId || 0,
+			mentoringTitle: mentoring?.title || '멘토링 없음',
+			mentoringContent: mentoring?.content || '',
+			mentoringPay: (mentoring?.amount || 0).toString(),
+			mentoringPeriod: '3개월',
+			mentoringParticipants: mentoring?.numberOfPeople || 0,
+			mentoringCategory: mentoring?.category || '',
 		};
 	});
 
-	const totalElements = content.length;
+	const totalElements = allMentors.length;
+	const { offset, size } = params;
 	const totalPages = Math.ceil(totalElements / size);
 	const startIndex = offset * size;
 	const endIndex = startIndex + size;
 	const pageData = content.slice(startIndex, endIndex);
+
 
 	const mockResponse: GetMentorListResponse = {
 		content: pageData,
@@ -101,6 +104,5 @@ export const getMentorList = async (
 		numberOfElements: pageData.length,
 		empty: pageData.length === 0,
 	};
-
 	return mockResponse;
 };
