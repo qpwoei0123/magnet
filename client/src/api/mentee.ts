@@ -1,6 +1,6 @@
 import { CreateMenteeParams } from '../types/api';
 import { MenteeData } from '../types/mentee';
-import db from '../db.json';
+import { db } from './mockData';
 
 // Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -38,7 +38,7 @@ export const getMenteeList = async (mentoringId: number): Promise<MenteeData[]> 
 
 	// Join with member data to get mentee name (nickname) and other details
 	const populatedMentees = mentees.map(mentee => {
-		const member = db.members.find(m => m.id === mentee.memberId);
+		const member = db.members.find(m => m.memberId === mentee.memberId);
 		return {
 			...mentee,
 			menteeNickName: member?.nickname || `User ${mentee.memberId}`,

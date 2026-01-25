@@ -1,6 +1,6 @@
 import { MemberStore } from '../store/MemberStore';
 import { UpdateMemberParams, GetMemberResponse } from '../types/api';
-import db from '../db.json';
+import { db } from './mockData';
 
 // Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -14,7 +14,7 @@ export const getMember = async (): Promise<GetMemberResponse> => {
 	}
 
 	const parsedMemberId = parseInt(memberId, 10);
-	const member = db.members.find(m => m.id === parsedMemberId);
+	const member = db.members.find(m => m.memberId === parsedMemberId);
 	if (!member) {
 		throw new Error('Member not found');
 	}
@@ -33,7 +33,7 @@ export const getMember = async (): Promise<GetMemberResponse> => {
 
 	// Transform db data to GetMemberResponse type
 	const memberData: GetMemberResponse = {
-		id: member.id,
+		id: member.memberId,
 		email: member.email,
 		nickName: member.nickname,
 		username: member.nickname,
@@ -66,7 +66,7 @@ export const deleteMember = async () => {
 	}
 
 	// Note: This won't persist. It just simulates the deletion.
-	const userIndex = db.members.findIndex(m => m.id === parseInt(memberId, 10));
+	const userIndex = db.members.findIndex(m => m.memberId === parseInt(memberId, 10));
 	if (userIndex > -1) {
 		db.members.splice(userIndex, 1);
 		console.log(`Mock: Deleted member with id ${memberId}`);
@@ -82,7 +82,7 @@ export const updateMember = async (params: UpdateMemberParams) => {
 		throw new Error('User is not logged in.');
 	}
 
-	const member = db.members.find(m => m.id === parseInt(memberId, 10));
+	const member = db.members.find(m => m.memberId === parseInt(memberId, 10));
 	if (!member) {
 		throw new Error('Member not found');
 	}
@@ -96,7 +96,7 @@ export const updateMember = async (params: UpdateMemberParams) => {
 
 	// Also update the global store for immediate UI feedback
 	const updatedMemberData: GetMemberResponse = {
-		id: member.id,
+		id: member.memberId,
 		email: member.email,
 		nickName: member.nickname,
 		username: member.nickname,

@@ -1,6 +1,6 @@
 import { Mentor } from '../types';
 import { CreateMentorParams, GetMentorListResponse, GetMentorListParams } from '../types/api';
-import db from '../db.json';
+import { db } from './mockData';
 
 // Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -52,8 +52,7 @@ export const getMentorList = async (
 
 	// Flatten the mentor data with their first mentoring session for the list view
 	const content = allMentors.map(m => {
-		const firstMentoring =
-			m.mentoringDtoList && m.mentoringDtoList.length > 0 ? m.mentoringDtoList[0] : null;
+		const firstMentoring = db.mentorings.find(mentoring => mentoring.mentorId === m.mentorId);
 		return {
 			mentorId: m.mentorId,
 			mentorName: m.mentorName,
@@ -65,7 +64,7 @@ export const getMentorList = async (
 			aboutMe: m.aboutMe,
 			github: m.github,
 			// Flattened mentoring fields for the list card
-			mentoringId: firstMentoring?.id || 0,
+			mentoringId: firstMentoring?.mentoringId || 0,
 			mentoringTitle: firstMentoring?.title || '멘토링 없음',
 			mentoringContent: firstMentoring?.content || '',
 			mentoringPay: firstMentoring?.pay || '',
