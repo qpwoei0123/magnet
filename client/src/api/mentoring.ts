@@ -5,7 +5,7 @@ import {
 	GetMentoringListResponse,
 	Content,
 } from '../types/api/mentoring';
-import db from '../db.json';
+import { db } from './mockData';
 
 // Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
