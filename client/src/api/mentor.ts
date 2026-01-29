@@ -1,6 +1,6 @@
 import { Mentor } from '../types';
 import { CreateMentorParams, GetMentorListResponse, GetMentorListParams } from '../types/api';
-import db from '../db.json';
+import { db } from './mockData';
 
 // Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -50,28 +50,26 @@ export const getMentorList = async (
 	const { offset, size } = params;
 	const allMentors = db.mentors;
 
-	// Flatten the mentor data with their first mentoring session for the list view
-	const content = allMentors.map(m => {
-		const firstMentoring =
-			m.mentoringDtoList && m.mentoringDtoList.length > 0 ? m.mentoringDtoList[0] : null;
+	// Join mentor data with their corresponding mentoring sessions
+	const content = db.mentorings.map(mentoring => {
+		const mentor = db.mentors.find(m => m.mentorId === mentoring.mentorId);
 		return {
-			mentorId: m.mentorId,
-			mentorName: m.mentorName,
-			career: m.career,
-			field: m.field,
-			task: m.task,
-			email: m.email,
-			phone: m.phone,
-			aboutMe: m.aboutMe,
-			github: m.github,
-			// Flattened mentoring fields for the list card
-			mentoringId: firstMentoring?.id || 0,
-			mentoringTitle: firstMentoring?.title || '멘토링 없음',
-			mentoringContent: firstMentoring?.content || '',
-			mentoringPay: firstMentoring?.pay || '',
-			mentoringPeriod: firstMentoring?.period || '',
-			mentoringParticipants: firstMentoring?.participants || 0,
-			mentoringCategory: firstMentoring?.category || '',
+			mentorId: mentor?.mentorId || 0,
+			mentorName: mentor?.mentorName || 'Unknown Mentor',
+			career: mentor?.career || '',
+			field: mentor?.field || '',
+			task: mentor?.task || '',
+			email: mentor?.email || '',
+			phone: mentor?.phone || '',
+			aboutMe: mentor?.aboutMe || '',
+			github: mentor?.github || '',
+			mentoringId: mentoring.mentoringId,
+			mentoringTitle: mentoring.title,
+			mentoringContent: mentoring.content,
+			mentoringPay: mentoring.pay,
+			mentoringPeriod: mentoring.period,
+			mentoringParticipants: mentoring.participants,
+			mentoringCategory: mentoring.category,
 		};
 	});
 
