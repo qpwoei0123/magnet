@@ -1,6 +1,7 @@
 import { Mentor } from '../types';
 import { CreateMentorParams, GetMentorListResponse, GetMentorListParams } from '../types/api';
-import db from '../db.json';
+import { db } from './mockData';
+import { MentoringDto } from '../types/mentoring';
 
 // Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -16,11 +17,11 @@ export const createMentor = async (params: CreateMentorParams) => {
 		mentorId: db.mentors.length + 1,
 		memberId: parseInt(memberId, 10),
 		...params,
-		mentoringDtoList: [], // Start with no mentoring sessions
+		mentoringDtoList: [], // This is dynamically generated in getMentor, so it's fine to keep here for the shape
 	};
 
 	// Note: This won't persist.
-	db.mentors.push(newMentor as any);
+	(db.mentors as any[]).push(newMentor);
 	console.log('Mock Create Mentor:', newMentor);
 	return;
 };
@@ -33,14 +34,32 @@ export const getMentor = async (): Promise<Mentor> => {
 	}
 
 	const parsedMemberId = parseInt(memberId, 10);
-	const mentor = db.mentors.find(m => m.memberId === parsedMemberId);
+	const mentorProfile = db.mentors.find(m => m.memberId === parsedMemberId);
 
-	if (!mentor) {
+	if (!mentorProfile) {
 		throw new Error('Mentor profile not found for the current user.');
 	}
 
-	// The 'Mentor' type from '../types/index.ts' includes `mentoringDtoList`
-	return mentor as unknown as Mentor;
+	// Dynamically find all mentorings for this mentor from the single source of truth
+	const mentoringsForMentor = db.mentorings.filter(m => m.mentorId === mentorProfile.mentorId);
+
+	const result: Mentor = {
+		...mentorProfile,
+		mentoringDtoList: mentoringsForMentor.map(
+			m =>
+				({
+					id: m.mentoringId,
+					title: m.title,
+					content: m.content,
+					pay: m.pay,
+					period: m.period,
+					participants: m.participants,
+					category: m.category,
+				} as MentoringDto),
+		),
+	};
+
+	return result;
 };
 
 export const getMentorList = async (
@@ -52,8 +71,9 @@ export const getMentorList = async (
 
 	// Flatten the mentor data with their first mentoring session for the list view
 	const content = allMentors.map(m => {
-		const firstMentoring =
-			m.mentoringDtoList && m.mentoringDtoList.length > 0 ? m.mentoringDtoList[0] : null;
+		// Find the first mentoring session from the single source of truth
+		const firstMentoring = db.mentorings.find(mentoring => mentoring.mentorId === m.mentorId);
+
 		return {
 			mentorId: m.mentorId,
 			mentorName: m.mentorName,
@@ -65,7 +85,7 @@ export const getMentorList = async (
 			aboutMe: m.aboutMe,
 			github: m.github,
 			// Flattened mentoring fields for the list card
-			mentoringId: firstMentoring?.id || 0,
+			mentoringId: firstMentoring?.mentoringId || 0,
 			mentoringTitle: firstMentoring?.title || '멘토링 없음',
 			mentoringContent: firstMentoring?.content || '',
 			mentoringPay: firstMentoring?.pay || '',
