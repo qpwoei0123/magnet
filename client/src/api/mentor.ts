@@ -1,6 +1,6 @@
 import { Mentor } from '../types';
 import { CreateMentorParams, GetMentorListResponse, GetMentorListParams } from '../types/api';
-import db from '../db.json';
+import { db } from './mockData';
 
 // Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -16,10 +16,9 @@ export const createMentor = async (params: CreateMentorParams) => {
 		mentorId: db.mentors.length + 1,
 		memberId: parseInt(memberId, 10),
 		...params,
-		mentoringDtoList: [], // Start with no mentoring sessions
+		mentoringDtoList: [],
 	};
 
-	// Note: This won't persist.
 	db.mentors.push(newMentor as any);
 	console.log('Mock Create Mentor:', newMentor);
 	return;
@@ -39,7 +38,6 @@ export const getMentor = async (): Promise<Mentor> => {
 		throw new Error('Mentor profile not found for the current user.');
 	}
 
-	// The 'Mentor' type from '../types/index.ts' includes `mentoringDtoList`
 	return mentor as unknown as Mentor;
 };
 
@@ -50,7 +48,6 @@ export const getMentorList = async (
 	const { offset, size } = params;
 	const allMentors = db.mentors;
 
-	// Flatten the mentor data with their first mentoring session for the list view
 	const content = allMentors.map(m => {
 		const firstMentoring =
 			m.mentoringDtoList && m.mentoringDtoList.length > 0 ? m.mentoringDtoList[0] : null;
@@ -64,7 +61,6 @@ export const getMentorList = async (
 			phone: m.phone,
 			aboutMe: m.aboutMe,
 			github: m.github,
-			// Flattened mentoring fields for the list card
 			mentoringId: firstMentoring?.id || 0,
 			mentoringTitle: firstMentoring?.title || '멘토링 없음',
 			mentoringContent: firstMentoring?.content || '',
