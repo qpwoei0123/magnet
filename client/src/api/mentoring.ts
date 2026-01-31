@@ -5,7 +5,7 @@ import {
 	GetMentoringListResponse,
 	Content,
 } from '../types/api/mentoring';
-import db from '../db.json';
+import { db } from './mockData';
 
 // Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -13,8 +13,6 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 export const createMentoring = async (params: CreateMentoringParams) => {
 	await delay(500);
 	console.log('Mock Create Mentoring:', params);
-	// In a real static demo, we can't persist this permanently,
-	// but we could theoretically update a local state or just return success.
 	return;
 };
 
@@ -26,13 +24,10 @@ export const getMentoring = async (mentoringId: number): Promise<GetMentoringRes
 		throw new Error('Mentoring not found');
 	}
 
-	// Join with Mentor data to get missing fields
 	const mentor = db.mentors.find(m => m.mentorId === mentoring.mentorId);
 
-	// Construct the full response merging mentoring and mentor data
 	const result: GetMentoringResponse = {
 		...mentoring,
-		// Ensure fields from mentor are present if missing in mentoring
 		career: mentoring.career || mentor?.career || '시니어',
 		field: mentoring.field || mentor?.field || mentoring.category,
 		task: mentoring.task || mentor?.task || '',
@@ -43,7 +38,6 @@ export const getMentoring = async (mentoringId: number): Promise<GetMentoringRes
 		mentorName: mentor?.mentorName || mentoring.mentorName || '알 수 없음',
 	};
 
-	// Side effects from original code
 	sessionStorage.setItem('mentoringId', result.mentoringId.toString());
 	sessionStorage.setItem('schedule', result.period);
 	sessionStorage.setItem('amount', result.pay);
@@ -52,12 +46,10 @@ export const getMentoring = async (mentoringId: number): Promise<GetMentoringRes
 };
 
 export const getMentoringList = async (
-	params: GetMentoringListParams,
+	_params: GetMentoringListParams,
 ): Promise<GetMentoringListResponse> => {
 	await delay(500);
 
-	// Join all mentorings with their mentor names for the list view
-	// The `Content` type in `GetMentoringListResponse` needs `mentorName`
 	const allData: Content[] = db.mentorings.map(mentoring => {
 		const mentor = db.mentors.find(m => m.mentorId === mentoring.mentorId);
 		return {
@@ -73,7 +65,7 @@ export const getMentoringList = async (
 	const totalElements = allData.length;
 
 	const mockResponse: GetMentoringListResponse = {
-		content: allData, // Return all data
+		content: allData,
 		pageable: {
 			pageNumber: 0,
 			pageSize: totalElements,

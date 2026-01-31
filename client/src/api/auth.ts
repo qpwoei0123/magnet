@@ -1,5 +1,5 @@
 import { SignupParams, LoginParams } from '../types/api';
-import db from '../db.json';
+import { db } from './mockData';
 
 // Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -22,7 +22,7 @@ export const signup = async (data: SignupParams) => {
 		createdAt: new Date().toISOString(),
 	};
 
-	// Note: This only adds to the in-memory db.json, it won't persist.
+	// Note: This only adds to the in-memory db, it won't persist.
 	db.members.push(newUser);
 
 	console.log('Mock Signup Success:', newUser);
