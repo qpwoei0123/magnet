@@ -5,7 +5,7 @@ import {
 	GetMentoringListResponse,
 	Content,
 } from '../types/api/mentoring';
-import db from '../db.json';
+import { db } from './mockData';
 
 // Helper to delay response for realistic feel
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -56,8 +56,7 @@ export const getMentoringList = async (
 ): Promise<GetMentoringListResponse> => {
 	await delay(500);
 
-	// Join all mentorings with their mentor names for the list view
-	// The `Content` type in `GetMentoringListResponse` needs `mentorName`
+	// Join with mentor data to ensure all fields required by Content type are present
 	const allData: Content[] = db.mentorings.map(mentoring => {
 		const mentor = db.mentors.find(m => m.mentorId === mentoring.mentorId);
 		return {
@@ -67,7 +66,7 @@ export const getMentoringList = async (
 			field: mentoring.field || mentor?.field || '',
 			task: mentoring.task || mentor?.task || '',
 			career: mentoring.career || mentor?.career || '',
-		};
+		} as Content;
 	});
 
 	const totalElements = allData.length;
